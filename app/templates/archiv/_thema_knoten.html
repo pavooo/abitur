@@ -1,0 +1,16 @@
+<li class="py-0.5">
+  <a
+    href="?thema={{ thema.kennung }}"
+    hx-get="{% url 'archiv:themenbrowser' %}?thema={{ thema.kennung }}"
+    hx-target="#treffer"
+    hx-push-url="true"
+    class="hover:underline {% if thema.kennung == ausgewaehlte_kennung %}font-semibold text-slate-900{% else %}text-slate-700{% endif %}"
+  >{{ thema.name }}{% if thema.kursniveau == "LK" %} <span class="text-xs text-slate-400">(LK)</span>{% endif %}</a>
+  {% if thema.baum_kinder %}
+    <ul class="ml-3 border-l border-slate-200 pl-2">
+      {% for kind in thema.baum_kinder %}
+        {% include "archiv/_thema_knoten.html" with thema=kind %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</li>

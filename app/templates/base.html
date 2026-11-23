@@ -5,14 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Abiturklausuren-Archiv{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+  <link rel="stylesheet" href="{% static 'katex/katex.min.css' %}">
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'katex/katex.min.js' %}" defer></script>
+  <script src="{% static 'katex/auto-render.min.js' %}" defer></script>
+  <script src="{% static 'js/mathe-rendering.js' %}" defer></script>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900">
+  {% if nachschreibmodus_aktiv %}
+    <div class="border-b-4 border-red-600 bg-red-100 px-4 py-2 text-center text-sm font-semibold text-red-800">
+      Nachschreibmodus aktiv – Nachschreibklausuren werden mit angezeigt.
+      <form method="post" action="{% url 'archiv:nachschreibmodus_umschalten' %}" class="inline">
+        {% csrf_token %}
+        <input type="hidden" name="weiter_zu" value="{{ request.get_full_path }}">
+        <button type="submit" class="ml-2 underline">Ausschalten</button>
+      </form>
+    </div>
+  {% endif %}
+
   <header class="bg-slate-800 text-white">
     <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
       <a href="{% url 'accounts:login_waehlen' %}" class="font-semibold">Abiturklausuren-Archiv</a>
       <nav class="flex items-center gap-4 text-sm">
+        {% if request.user.is_authenticated or request.sus_zugangscode %}
+          <a href="{% url 'archiv:suche' %}" class="hover:underline">Suche</a>
+          <a href="{% url 'archiv:themenbrowser' %}" class="hover:underline">Themen</a>
+        {% endif %}
         {% if request.user.is_authenticated %}
           <span>{{ request.user.email }}</span>
+          {% if not nachschreibmodus_aktiv %}
+            <form method="post" action="{% url 'archiv:nachschreibmodus_umschalten' %}" class="inline">
+              {% csrf_token %}
+              <input type="hidden" name="weiter_zu" value="{{ request.get_full_path }}">
+              <button type="submit" class="hover:underline">Nachschreibklausuren anzeigen</button>
+            </form>
+          {% endif %}
           {% if request.user.ist_admin %}
             <a href="{% url 'adminbereich:dashboard' %}" class="hover:underline">Adminbereich</a>
           {% endif %}

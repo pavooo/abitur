@@ -9,6 +9,7 @@
     <a href="{% url 'adminbereich:zugangscode_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Zugangscodes</a>
     <a href="{% url 'adminbereich:import_hochladen' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Import</a>
     <a href="{% url 'adminbereich:import_protokoll_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Import-Protokoll</a>
+    <a href="{% url 'adminbereich:nachschreib_protokoll_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Nachschreib-Zugriffe</a>
   </nav>
   <div>
     {% block admin_content %}{% endblock %}

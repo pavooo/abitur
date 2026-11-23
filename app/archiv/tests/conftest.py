@@ -34,6 +34,7 @@ def klausur_haupttermin(fach_mathe):
         termin=Klausur.Termin.HAUPTTERMIN,
         variante="A",
         titel="Analysis",
+        hilfsmittel=Klausur.Hilfsmittel.TR,
         pdf=dummy_pdf("haupttermin.pdf"),
     )
 
@@ -47,6 +48,7 @@ def klausur_nachschreibtermin(fach_mathe):
         termin=Klausur.Termin.NACHSCHREIBTERMIN,
         variante="A",
         titel="Analysis (Nachschreiber)",
+        hilfsmittel=Klausur.Hilfsmittel.TR,
         pdf=dummy_pdf("nachschreiber.pdf"),
     )
 
@@ -60,13 +62,19 @@ def klausur_anderes_fach(fach_deutsch):
         termin=Klausur.Termin.HAUPTTERMIN,
         variante="",
         titel="Lyrik",
+        hilfsmittel=Klausur.Hilfsmittel.TR,
         pdf=dummy_pdf("deutsch.pdf"),
     )
 
 
 def erstelle_aufgabe(klausur, nummer=1):
     return Aufgabe.objects.create(
-        klausur=klausur, nummer=nummer, kontext="Kontext", seite_von=1, seite_bis=2
+        klausur=klausur,
+        nummer=nummer,
+        kontext="Kontext",
+        seite_von=1,
+        seite_bis=2,
+        pruefungsteil=Aufgabe.Pruefungsteil.MIT_HILFSMITTELN,
     )
 
 
@@ -111,3 +119,38 @@ def lehrkraft_request_factory(db):
 @pytest.fixture
 def anonymer_request():
     return SimpleNamespace(sus_zugangscode=None, user=AnonymousUser(), session={})
+
+
+@pytest.fixture
+def sus_client(client, fach_mathe):
+    """Django-Test-Client mit gültiger SuS-Zugangscode-Session (für View-Tests,
+    im Gegensatz zu `sus_request`, das nur die reine Sichtbarkeitslogik testet)."""
+    zugangscode, _klartext = Zugangscode.erstellen(
+        fach=fach_mathe,
+        bezeichnung="SuS-Code",
+        ablaufdatum=timezone.localdate() + datetime.timedelta(days=30),
+    )
+    session = client.session
+    session["sus_zugangscode_id"] = zugangscode.pk
+    session.save()
+    return client
+
+
+@pytest.fixture
+def lehrkraft_client_factory(client):
+    def _erstellen(faecher=(), nachschreibmodus=False, ist_admin=False):
+        lehrkraft = Lehrkraft.objects.create_user(
+            email=f"lehrkraft-client-{Lehrkraft.objects.count()}@schule.de",
+            password="s3hrGeheim!",
+            status=Lehrkraft.Status.AKTIV,
+            ist_admin=ist_admin,
+        )
+        lehrkraft.faecher.set(faecher)
+        client.force_login(lehrkraft)
+        if nachschreibmodus:
+            session = client.session
+            session[NACHSCHREIBMODUS_SESSION_KEY] = True
+            session.save()
+        return client
+
+    return _erstellen

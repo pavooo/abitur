@@ -29,6 +29,7 @@ ADMIN_URLS = [
     "adminbereich:zugangscode_liste",
     "adminbereich:import_hochladen",
     "adminbereich:import_protokoll_liste",
+    "adminbereich:nachschreib_protokoll_liste",
 ]
 
 

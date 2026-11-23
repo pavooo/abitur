@@ -1,8 +1,6 @@
 {
   "schema_version": 1,
   "fach": "M",
-  "status": "entwurf",
-  "hinweis": "Entwurf; in Phase 4 gegen Kernlehrpläne 2014/2023 und Abitur-Vorgaben prüfen.",
   "themen": [
     {
       "kennung": "analysis",
@@ -601,8 +599,7 @@
       "synonyme": [
         "Rotationskörper",
         "Volumen bei Rotation um die x-Achse"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "analysis.modellierung",
@@ -1325,16 +1322,14 @@
       "kursniveau": "LK",
       "synonyme": [
         "Sigma-Umgebung"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.sigma.sigma_regeln",
       "name": "Sigma-Regeln",
       "eltern": "stochastik.sigma",
       "kursniveau": "LK",
-      "synonyme": [],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      "synonyme": []
     },
     {
       "kennung": "stochastik.sigma.prognoseintervall",
@@ -1343,8 +1338,7 @@
       "kursniveau": "LK",
       "synonyme": [
         "mit 95 % Wahrscheinlichkeit zwischen"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.normalverteilung",
@@ -1391,8 +1385,7 @@
       "synonyme": [
         "Hypothesentest",
         "Signifikanztest"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.testen.einseitig",
@@ -1402,16 +1395,14 @@
       "synonyme": [
         "linksseitig",
         "rechtsseitig"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.testen.zweiseitig",
       "name": "Zweiseitiger Test",
       "eltern": "stochastik.testen",
       "kursniveau": "LK",
-      "synonyme": [],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      "synonyme": []
     },
     {
       "kennung": "stochastik.testen.entscheidungsregel",
@@ -1422,8 +1413,7 @@
         "Ablehnungsbereich",
         "Signifikanzniveau",
         "Nullhypothese"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.testen.fehlerarten",
@@ -1433,8 +1423,7 @@
       "synonyme": [
         "irrtümlich abgelehnt",
         "irrtümlich beibehalten"
-      ],
-      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+      ]
     },
     {
       "kennung": "stochastik.prozesse",
@@ -1475,6 +1464,51 @@
         "Grenzverteilung",
         "Fixvektor",
         "langfristige Entwicklung"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.potenz",
+      "name": "Potenzfunktionen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Wurzelfunktion",
+        "x^n",
+        "rationale Exponenten",
+        "Wurzelfunktionen"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.trigonometrisch",
+      "name": "Trigonometrische Funktionen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Sinusfunktion",
+        "Kosinusfunktion",
+        "Sinus",
+        "Kosinus"
+      ]
+    },
+    {
+      "kennung": "stochastik.sigma.konfidenzintervall",
+      "name": "Konfidenzintervall",
+      "eltern": "stochastik.sigma",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Vertrauensintervall",
+        "Rückschluss auf Grundgesamtheit",
+        "Parameterschätzung"
+      ]
+    },
+    {
+      "kennung": "stochastik.sigma.stichprobenumfang",
+      "name": "Stichprobenumfang-Schätzung",
+      "eltern": "stochastik.sigma",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Mindeststichprobengröße",
+        "erforderliche Stichprobengröße"
       ]
     }
   ]

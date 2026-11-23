@@ -97,11 +97,14 @@ docker/, docker-compose.yml, .env.example
 ## Datenmodell (Kern)
 - **Fach**: Name, Kürzel (z. B. `M`)
 - **Thema**: gehört zu Fach, hierarchisch (Eltern-Thema), stabile `kennung`
-  (z. B. `analysis.diff.wendepunkt`), Name, Synonymliste
+  (z. B. `analysis.diff.wendepunkt`), Name, Synonymliste, Kursniveau (`alle`|`LK`)
 - **Klausur**: Fach, Jahr, Kursart (`GK`|`LK`), Termin, Variante (z. B. A/B, Wahlteil),
-  Titel, PDF, Erwartungshorizont-PDF (optional), Importprotokoll-Referenz
+  Titel, Hilfsmittel (`TR`: Taschenrechner, umfasst WTR/GTR|`CAS`), PDF, Erwartungshorizont-PDF (optional),
+  Importprotokoll-Referenz
   Eindeutig: Fach + Jahr + Kursart + Termin + Variante
-- **Aufgabe**: Klausur, Nummer, Titel/Kontext (z. B. „Bakterienwachstum“), Seitenbereich
+- **Aufgabe**: Klausur, Nummer, Titel/Kontext (z. B. „Bakterienwachstum“), Seitenbereich,
+  Prüfungsteil (`hilfsmittelfrei`|`mit_hilfsmitteln`), Aufgabenbereich
+  (`pflicht`|`wahlpflicht`|`keine_angabe`, für ältere Klausuren ohne diese Einteilung)
 - **Teilaufgabe**: Aufgabe, Bezeichnung (z. B. `2b`), Text, Seite, Punkte (optional),
   Themen (M2M), Anforderungsbereich (I–III), Operatoren, Begründung der Zuordnung
 - Volltext-Suchvektor auf Teilaufgabe (Text + Aufgabenkontext + Themennamen + Synonyme)
@@ -132,11 +135,14 @@ Beispiel `klausuren/<klausur-id>.json` (verkürzt):
   "termin": "haupttermin",
   "variante": "A",
   "titel": "Analysis – Prüfungsteil B",
+  "hilfsmittel": "TR",
   "aufgaben": [
     {
       "nummer": 1,
       "kontext": "Bakterienwachstum",
       "seiten": [2, 3],
+      "pruefungsteil": "mit_hilfsmitteln",
+      "aufgabenbereich": "pflicht",
       "teilaufgaben": [
         {
           "bezeichnung": "1c",
@@ -176,14 +182,20 @@ Beispiel `klausuren/<klausur-id>.json` (verkürzt):
   - Anforderungsbereich, Operatoren und kurze Begründung je Teilaufgabe
   - Termin (Haupt/Nachschreib) aus dem Dokument bestimmen; wenn unklar: nachfragen
   - Ergebnis gegen `schema/` validieren und als ZIP in `zerlegung/pakete/` ablegen
-- `taxonomien/mathematik.json`: Themenbaum Mathematik, angelehnt an den Kernlehrplan NRW
-  (Analysis, Lineare Algebra/Analytische Geometrie, Stochastik)
-- `eingang/`, `pakete/`: in `.gitignore`
+  - Prüfungsteil (hilfsmittelfrei / mit Hilfsmitteln), Aufgabenbereich und Hilfsmittel
+    aus dem Dokument bestimmen
+- `taxonomien/mathematik.json`: Themenbaum Mathematik (Analysis, Analytische Geometrie und
+  Lineare Algebra, Stochastik). Ein Entwurf liegt vor; in Phase 4 prüft Claude ihn gegen die
+  Kernlehrpläne (2014 und 2023) und die Abitur-Vorgaben in `zerlegung/quellen/`:
+  Kursniveau (GK/LK) je Thema korrigieren, fehlende Themen ergänzen, Abweichungen
+  als Liste zur Bestätigung vorlegen, nicht still ändern.
+- `eingang/`, `pakete/`, `quellen/`: in `.gitignore`
 - Validierungsskript `zerlegung/validate.py`, das dieselben Schemata nutzt wie die App
 
 ## Suche
 - Kombiniert Volltext, Themen (inkl. Unterthemen) und Synonyme.
-- Filter: Fach (wenn mehrere), Jahr, Kursart, Thema, Anforderungsbereich.
+- Filter: Fach (wenn mehrere), Jahr, Kursart, Thema, Anforderungsbereich, Hilfsmittel und
+  Prüfungsteil. Der Filter „nur hilfsmittelfrei“ ist für SuS prominent sichtbar.
   Termin-Filter nur für Lehrkräfte im aktivierten Nachschreibmodus.
 - Treffer auf Ebene der Teilaufgabe, gruppiert nach Klausur, mit Link zur passenden PDF-Seite.
 - Themenbrowser: Themenbaum durchklicken → alle passenden Teilaufgaben.
@@ -200,8 +212,8 @@ Beispiel `klausuren/<klausur-id>.json` (verkürzt):
    (Lehrkräfte, Fächer, Codes)
 2. Datenmodell + zentrale Sichtbarkeitslogik inkl. Pflicht-Tests für Nachschreibklausuren
 3. JSON-Schemata + Import (Validierung, Vorschau, Transaktion, Protokoll, Management-Command)
-4. `zerlegung/`: README, Mathematik-Taxonomie, Validierungsskript; erster Testimport mit
-   2–3 echten Klausuren
+4. `zerlegung/`: README, Mathematik-Taxonomie prüfen (gegen Lehrpläne in `quellen/`),
+   Validierungsskript; erster Testimport mit 2–3 echten Klausuren
 5. Suche, Themenbrowser, Klausuransicht, Nachschreibmodus für Lehrkräfte
 6. Produktions-Deployment auf Hetzner (Compose prod, nginx-Snippet mit `X-Accel-Redirect`, Backups)
 

@@ -2,15 +2,18 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://abiturklausuren-archiv.local/schema/taxonomie.schema.json",
   "title": "Taxonomie",
+  "description": "Flache Themenliste; jedes Thema verweist per 'eltern' auf die Kennung seines Elternthemas (oder null bei einem Wurzelthema). Wird sowohl für zerlegung/taxonomien/<fach>.json als auch für taxonomie.json in Import-Paketen verwendet.",
   "type": "object",
-  "required": ["fach", "themen"],
+  "required": ["schema_version", "fach", "themen"],
   "additionalProperties": false,
   "properties": {
-    "fach": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "fach": { "type": "string", "minLength": 1, "maxLength": 10 },
+    "status": {
       "type": "string",
-      "minLength": 1,
-      "maxLength": 10
+      "description": "z. B. 'entwurf', solange die Taxonomie noch gegen die Lehrpläne geprüft wird."
     },
+    "hinweis": { "type": "string" },
     "themen": {
       "type": "array",
       "items": { "$ref": "#/$defs/thema" }
@@ -19,27 +22,28 @@
   "$defs": {
     "thema": {
       "type": "object",
-      "required": ["kennung", "name"],
+      "required": ["kennung", "name", "eltern", "kursniveau", "synonyme"],
       "additionalProperties": false,
       "properties": {
         "kennung": {
           "type": "string",
-          "pattern": "^[a-z0-9]+(\\.[a-z0-9]+)*$",
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)*$",
           "description": "Stabile, vollständige Kennung (z. B. 'analysis.diff.wendepunkt')."
         },
-        "name": {
-          "type": "string",
-          "minLength": 1
+        "name": { "type": "string", "minLength": 1 },
+        "eltern": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)*$",
+          "description": "Kennung des Elternthemas, oder null bei einem Wurzelthema."
         },
+        "kursniveau": { "type": "string", "enum": ["alle", "LK"] },
         "synonyme": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
-          "default": []
+          "items": { "type": "string", "minLength": 1 }
         },
-        "themen": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/thema" },
-          "default": []
+        "zu_pruefen": {
+          "type": "string",
+          "description": "Freitext-Hinweis für den Lehrplan-Abgleich; darf in fertigen Import-Paketen nicht mehr vorkommen."
         }
       }
     }

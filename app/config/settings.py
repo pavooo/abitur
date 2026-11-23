@@ -65,6 +65,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "archiv.context_processors.nachschreibmodus",
             ],
         },
     },
@@ -110,6 +111,11 @@ MEDIA_ROOT = REPO_ROOT / "media"
 
 # Zwischenspeicher für hochgeladene Import-Pakete zwischen Vorschau und Bestätigung.
 IMPORT_STAGING_ROOT = REPO_ROOT / "import_staging"
+
+# Interner nginx-Pfad für X-Accel-Redirect bei geschützten Mediendateien (siehe
+# archiv/dateien.py). Muss mit der nginx-Konfiguration aus Phase 6 übereinstimmen;
+# im Dev-Modus (DEBUG) ungenutzt, da dort direkt ausgeliefert wird.
+GESCHUETZTE_MEDIEN_INTERNER_PFAD = "/geschuetzte-medien/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

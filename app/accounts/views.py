@@ -1,10 +1,11 @@
+from archiv.views import suche as archiv_suche
 from axes.handlers.proxy import AxesProxyHandler
 from axes.helpers import get_client_ip_address
 from django.contrib import messages
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
@@ -90,9 +91,9 @@ class ZugangscodeLoginView(FormView):
 
 @login_required
 def lehrkraft_startseite(request):
-    return render(request, "accounts/lehrkraft_startseite.html")
+    return archiv_suche(request)
 
 
 @sus_erforderlich
 def sus_startseite(request):
-    return render(request, "accounts/sus_startseite.html")
+    return archiv_suche(request)

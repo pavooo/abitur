@@ -1,0 +1,48 @@
+{% if seite_obj %}
+  {% for eintrag in seite_obj %}
+    <article class="mb-6 rounded-lg border p-4 {% if eintrag.klausur.termin == 'nachschreibtermin' %}border-red-400 bg-red-50{% else %}border-slate-200 bg-white{% endif %}">
+      <header class="mb-2 flex items-center justify-between gap-2">
+        <a href="{% url 'archiv:klausur_detail' eintrag.klausur.pk %}" class="font-semibold hover:underline">
+          {{ eintrag.klausur.titel }}
+          <span class="font-normal text-slate-500">
+            ({{ eintrag.klausur.fach.kuerzel }} {{ eintrag.klausur.jahr }} {{ eintrag.klausur.kursart }})
+          </span>
+        </a>
+        {% if eintrag.klausur.termin == "nachschreibtermin" %}
+          <span class="shrink-0 rounded bg-red-600 px-2 py-0.5 text-xs font-semibold text-white">Nachschreibtermin</span>
+        {% endif %}
+      </header>
+      <ul class="space-y-2">
+        {% for teilaufgabe in eintrag.teilaufgaben %}
+          <li class="text-sm">
+            <span class="font-medium">{{ teilaufgabe.bezeichnung }}</span>
+            <a href="{% url 'archiv:klausur_datei' eintrag.klausur.pk 'pdf' %}#page={{ teilaufgabe.seite }}"
+               target="_blank" class="ml-1 text-xs text-slate-500 hover:underline">(Seite {{ teilaufgabe.seite }})</a>
+            — {{ teilaufgabe.text|truncatewords:30 }}
+            {% if teilaufgabe.themen.all %}
+              <span class="block text-xs text-slate-500">
+                {% for thema in teilaufgabe.themen.all %}{{ thema.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+              </span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  {% empty %}
+    <p class="text-sm text-slate-500">Keine Treffer.</p>
+  {% endfor %}
+
+  {% if seite_obj.paginator.num_pages > 1 %}
+    <nav class="mt-4 flex items-center gap-3 text-sm">
+      {% if seite_obj.has_previous %}
+        <a hx-get="?{{ g.urlencode }}&seite={{ seite_obj.previous_page_number }}" hx-target="#treffer" hx-push-url="true"
+           href="?{{ g.urlencode }}&seite={{ seite_obj.previous_page_number }}" class="underline">Zurück</a>
+      {% endif %}
+      <span>Seite {{ seite_obj.number }} von {{ seite_obj.paginator.num_pages }}</span>
+      {% if seite_obj.has_next %}
+        <a hx-get="?{{ g.urlencode }}&seite={{ seite_obj.next_page_number }}" hx-target="#treffer" hx-push-url="true"
+           href="?{{ g.urlencode }}&seite={{ seite_obj.next_page_number }}" class="underline">Weiter</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endif %}

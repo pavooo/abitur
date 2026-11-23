@@ -1,0 +1,30 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Nachschreib-Zugriffe{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Zugriffsprotokoll Nachschreibklausuren</h1>
+<table class="w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">Zeitpunkt</th>
+      <th class="px-4 py-2">Lehrkraft</th>
+      <th class="px-4 py-2">Klausur</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for zugriff in zugriffe %}
+      <tr class="border-t border-slate-100">
+        <td class="px-4 py-2">{{ zugriff.zeitpunkt }}</td>
+        <td class="px-4 py-2">{{ zugriff.lehrkraft.email }}</td>
+        <td class="px-4 py-2">
+          {{ zugriff.klausur.titel }}
+          ({{ zugriff.klausur.fach.kuerzel }} {{ zugriff.klausur.jahr }} {{ zugriff.klausur.kursart }})
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="3">Noch keine Zugriffe protokolliert.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

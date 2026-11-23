@@ -1,5 +1,5 @@
 from accounts.models import Lehrkraft, Zugangscode
-from archiv.models import Fach
+from archiv.models import Fach, NachschreibZugriff
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -207,3 +207,11 @@ def import_bestaetigen(request):
 def import_protokoll_liste(request):
     protokolle = Importprotokoll.objects.select_related("lehrkraft").all()
     return render(request, "adminbereich/import_protokoll_liste.html", {"protokolle": protokolle})
+
+
+@admin_erforderlich
+def nachschreib_protokoll_liste(request):
+    zugriffe = NachschreibZugriff.objects.select_related(
+        "lehrkraft", "klausur", "klausur__fach"
+    ).all()
+    return render(request, "adminbereich/nachschreib_protokoll_liste.html", {"zugriffe": zugriffe})

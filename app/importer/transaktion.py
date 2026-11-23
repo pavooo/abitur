@@ -63,22 +63,32 @@ def importiere_paket(paket: EntpacktesPaket, *, lehrkraft, paketname: str) -> Im
 
 
 def _taxonomie_importieren(taxonomie: dict) -> None:
+    """Flache Themen-Liste, jedes Thema verweist per `eltern` auf die Kennung
+    seines Elternthemas. Zweistufig: erst alle Knoten upserten, dann die
+    `eltern`-Verweise auflösen – damit die Reihenfolge in der JSON-Liste keine
+    Rolle spielt."""
     fach = Fach.objects.get(kuerzel=taxonomie["fach"])
-    _themen_knoten_importieren(fach, taxonomie.get("themen", []), eltern=None)
+    knoten_liste = taxonomie.get("themen", [])
 
-
-def _themen_knoten_importieren(fach: Fach, knoten_liste, eltern) -> None:
     for knoten in knoten_liste:
-        thema, _erstellt = Thema.objects.update_or_create(
+        Thema.objects.update_or_create(
             fach=fach,
             kennung=knoten["kennung"],
             defaults={
                 "name": knoten["name"],
                 "synonyme": knoten.get("synonyme", []),
-                "eltern": eltern,
+                "kursniveau": knoten.get("kursniveau", Thema.Kursniveau.ALLE),
             },
         )
-        _themen_knoten_importieren(fach, knoten.get("themen", []), eltern=thema)
+
+    for knoten in knoten_liste:
+        eltern_kennung = knoten.get("eltern")
+        eltern = (
+            Thema.objects.get(fach=fach, kennung=eltern_kennung)
+            if eltern_kennung is not None
+            else None
+        )
+        Thema.objects.filter(fach=fach, kennung=knoten["kennung"]).update(eltern=eltern)
 
 
 def _klausur_importieren(eintrag: KlausurEintrag, protokoll: Importprotokoll):
@@ -91,7 +101,11 @@ def _klausur_importieren(eintrag: KlausurEintrag, protokoll: Importprotokoll):
         kursart=daten["kursart"],
         termin=daten["termin"],
         variante=daten.get("variante", ""),
-        defaults={"titel": daten["titel"], "importprotokoll": protokoll},
+        defaults={
+            "titel": daten["titel"],
+            "hilfsmittel": daten["hilfsmittel"],
+            "importprotokoll": protokoll,
+        },
     )
 
     with open(eintrag.pdf_pfad, "rb") as datei:
@@ -113,6 +127,10 @@ def _klausur_importieren(eintrag: KlausurEintrag, protokoll: Importprotokoll):
             kontext=aufgabe_daten.get("kontext", ""),
             seite_von=seite_von,
             seite_bis=seite_bis,
+            pruefungsteil=aufgabe_daten["pruefungsteil"],
+            aufgabenbereich=aufgabe_daten.get(
+                "aufgabenbereich", Aufgabe.Aufgabenbereich.KEINE_ANGABE
+            ),
         )
         for teilaufgabe_daten in aufgabe_daten["teilaufgaben"]:
             teilaufgabe = Teilaufgabe.objects.create(

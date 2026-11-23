@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Suche{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-xl font-semibold">Klausuren durchsuchen</h1>
+
+<form hx-get="{% url 'archiv:suche' %}" hx-target="#treffer" hx-push-url="true" hx-trigger="submit, change"
+      class="mb-6 space-y-3 rounded-lg border border-slate-200 bg-white p-4">
+  <div class="flex flex-wrap gap-3">
+    <input type="search" name="q" value="{{ g.q }}" placeholder="Suchbegriff"
+           class="min-w-[200px] flex-1 rounded border border-slate-300 px-3 py-2 text-sm">
+
+    {% if faecher %}
+      <select name="fach" class="rounded border border-slate-300 px-3 py-2 text-sm">
+        <option value="">Alle Fächer</option>
+        {% for fach in faecher %}
+          <option value="{{ fach.id }}" {% if g.fach == fach.id|stringformat:"s" %}selected{% endif %}>{{ fach.name }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+
+    <input type="number" name="jahr" value="{{ g.jahr }}" placeholder="Jahr"
+           class="w-24 rounded border border-slate-300 px-3 py-2 text-sm">
+
+    <select name="kursart" class="rounded border border-slate-300 px-3 py-2 text-sm">
+      <option value="">GK/LK</option>
+      {% for wert, label in kursarten %}
+        <option value="{{ wert }}" {% if g.kursart == wert %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="anforderungsbereich" class="rounded border border-slate-300 px-3 py-2 text-sm">
+      <option value="">Anforderungsbereich</option>
+      {% for wert, label in anforderungsbereiche %}
+        <option value="{{ wert }}" {% if g.anforderungsbereich == wert %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="hilfsmittel" class="rounded border border-slate-300 px-3 py-2 text-sm">
+      <option value="">Hilfsmittel</option>
+      {% for wert, label in hilfsmittel_choices %}
+        <option value="{{ wert }}" {% if g.hilfsmittel == wert %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+
+    {% if not ist_lehrkraft %}
+      <label class="flex items-center gap-2 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900">
+        <input type="checkbox" name="nur_hilfsmittelfrei" value="1" {% if g.nur_hilfsmittelfrei == "1" %}checked{% endif %}>
+        Nur hilfsmittelfrei
+      </label>
+    {% else %}
+      <select name="pruefungsteil" class="rounded border border-slate-300 px-3 py-2 text-sm">
+        <option value="">Prüfungsteil</option>
+        {% for wert, label in pruefungsteil_choices %}
+          <option value="{{ wert }}" {% if g.pruefungsteil == wert %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      {% if nachschreibmodus_aktiv %}
+        <select name="termin" class="rounded border border-slate-300 px-3 py-2 text-sm">
+          <option value="">Termin</option>
+          {% for wert, label in termine %}
+            <option value="{{ wert }}" {% if g.termin == wert %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
+    {% endif %}
+  </div>
+  <button type="submit" class="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700">Suchen</button>
+</form>
+
+<div id="treffer">
+  {% include "archiv/_treffer_liste.html" %}
+</div>
+{% endblock %}

@@ -16,9 +16,10 @@ db.sqlite3
 # Umgebungsvariablen / Geheimnisse
 .env
 
-# Klausur-PDFs und Import-Pakete (urheberrechtlich geschützt)
+# Klausur-PDFs und Import-Pakete (urheberrechtlich geschützt); Lehrplan-/Vorgaben-Quellen
 zerlegung/eingang/
 zerlegung/pakete/
+zerlegung/quellen/
 media/
 import_staging/
 

@@ -3,7 +3,7 @@
   "$id": "https://abiturklausuren-archiv.local/schema/klausur.schema.json",
   "title": "Klausur",
   "type": "object",
-  "required": ["id", "fach", "jahr", "kursart", "termin", "titel", "aufgaben"],
+  "required": ["id", "fach", "jahr", "kursart", "termin", "titel", "hilfsmittel", "aufgaben"],
   "additionalProperties": false,
   "properties": {
     "id": {
@@ -21,6 +21,7 @@
     },
     "variante": { "type": "string", "default": "" },
     "titel": { "type": "string", "minLength": 1 },
+    "hilfsmittel": { "type": "string", "enum": ["TR", "CAS"] },
     "aufgaben": {
       "type": "array",
       "minItems": 1,
@@ -30,7 +31,7 @@
   "$defs": {
     "aufgabe": {
       "type": "object",
-      "required": ["nummer", "seiten", "teilaufgaben"],
+      "required": ["nummer", "seiten", "pruefungsteil", "teilaufgaben"],
       "additionalProperties": false,
       "properties": {
         "nummer": { "type": "integer", "minimum": 1 },
@@ -41,6 +42,13 @@
           "minItems": 2,
           "maxItems": 2,
           "description": "[erste Seite, letzte Seite] der Aufgabe."
+        },
+        "pruefungsteil": { "type": "string", "enum": ["hilfsmittelfrei", "mit_hilfsmitteln"] },
+        "aufgabenbereich": {
+          "type": "string",
+          "enum": ["pflicht", "wahlpflicht", "keine_angabe"],
+          "default": "keine_angabe",
+          "description": "Fehlt bei älteren Klausuren ohne diese Einteilung; dann 'keine_angabe'."
         },
         "teilaufgaben": {
           "type": "array",
@@ -60,7 +68,7 @@
         "punkte": { "type": "integer", "minimum": 0 },
         "themen": {
           "type": "array",
-          "items": { "type": "string", "pattern": "^[a-z0-9]+(\\.[a-z0-9]+)*$" },
+          "items": { "type": "string", "pattern": "^[a-z0-9_]+(\\.[a-z0-9_]+)*$" },
           "default": []
         },
         "anforderungsbereich": { "type": "string", "enum": ["I", "II", "III"] },

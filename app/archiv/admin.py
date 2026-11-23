@@ -11,8 +11,8 @@ class FachAdmin(admin.ModelAdmin):
 
 @admin.register(Thema)
 class ThemaAdmin(admin.ModelAdmin):
-    list_display = ["kennung", "name", "fach", "eltern"]
-    list_filter = ["fach"]
+    list_display = ["kennung", "name", "fach", "eltern", "kursniveau"]
+    list_filter = ["fach", "kursniveau"]
     search_fields = ["kennung", "name"]
 
 
@@ -23,8 +23,8 @@ class AufgabeInline(admin.TabularInline):
 
 @admin.register(Klausur)
 class KlausurAdmin(admin.ModelAdmin):
-    list_display = ["titel", "fach", "jahr", "kursart", "termin", "variante"]
-    list_filter = ["fach", "jahr", "kursart", "termin"]
+    list_display = ["titel", "fach", "jahr", "kursart", "termin", "variante", "hilfsmittel"]
+    list_filter = ["fach", "jahr", "kursart", "termin", "hilfsmittel"]
     search_fields = ["titel"]
     inlines = [AufgabeInline]
 
@@ -36,8 +36,8 @@ class TeilaufgabeInline(admin.TabularInline):
 
 @admin.register(Aufgabe)
 class AufgabeAdmin(admin.ModelAdmin):
-    list_display = ["klausur", "nummer", "kontext"]
-    list_filter = ["klausur__fach"]
+    list_display = ["klausur", "nummer", "kontext", "pruefungsteil", "aufgabenbereich"]
+    list_filter = ["klausur__fach", "pruefungsteil", "aufgabenbereich"]
     inlines = [TeilaufgabeInline]
 
 

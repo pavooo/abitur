@@ -60,8 +60,31 @@ def klausur_json(
     termin: str = "haupttermin",
     variante: str = "A",
     titel: str = "Analysis",
+    hilfsmittel: str = "TR",
     themen: list[str] | None = None,
+    aufgabenbereich: str | None = None,
 ) -> dict:
+    aufgabe = {
+        "nummer": 1,
+        "kontext": "Bakterienwachstum",
+        "seiten": [1, 2],
+        "pruefungsteil": "mit_hilfsmitteln",
+        "teilaufgaben": [
+            {
+                "bezeichnung": "1a",
+                "seite": 1,
+                "text": "Berechnen Sie den Anfangsbestand.",
+                "punkte": 4,
+                "themen": themen or [],
+                "anforderungsbereich": "I",
+                "operatoren": ["berechnen"],
+                "begruendung": "Einsetzen in die Modellgleichung.",
+            }
+        ],
+    }
+    if aufgabenbereich is not None:
+        aufgabe["aufgabenbereich"] = aufgabenbereich
+
     return {
         "id": id,
         "fach": fach,
@@ -70,26 +93,42 @@ def klausur_json(
         "termin": termin,
         "variante": variante,
         "titel": titel,
-        "aufgaben": [
-            {
-                "nummer": 1,
-                "kontext": "Bakterienwachstum",
-                "seiten": [1, 2],
-                "teilaufgaben": [
-                    {
-                        "bezeichnung": "1a",
-                        "seite": 1,
-                        "text": "Berechnen Sie den Anfangsbestand.",
-                        "punkte": 4,
-                        "themen": themen or [],
-                        "anforderungsbereich": "I",
-                        "operatoren": ["berechnen"],
-                        "begruendung": "Einsetzen in die Modellgleichung.",
-                    }
-                ],
-            }
-        ],
+        "hilfsmittel": hilfsmittel,
+        "aufgaben": [aufgabe],
     }
+
+
+def taxonomie_json(
+    fach_kuerzel: str,
+    themen: list[dict],
+    *,
+    schema_version: int = 1,
+    status: str | None = None,
+) -> dict:
+    """Baut eine Taxonomie im flachen `eltern`-Format (wie
+    zerlegung/taxonomien/mathematik.json). `themen`-Einträge brauchen nur
+    `kennung`/`name`; `eltern`, `kursniveau`, `synonyme` haben Defaults."""
+    vollstaendige_themen = []
+    for thema in themen:
+        eintrag = {
+            "kennung": thema["kennung"],
+            "name": thema["name"],
+            "eltern": thema.get("eltern"),
+            "kursniveau": thema.get("kursniveau", "alle"),
+            "synonyme": thema.get("synonyme", []),
+        }
+        if "zu_pruefen" in thema:
+            eintrag["zu_pruefen"] = thema["zu_pruefen"]
+        vollstaendige_themen.append(eintrag)
+
+    ergebnis = {
+        "schema_version": schema_version,
+        "fach": fach_kuerzel,
+        "themen": vollstaendige_themen,
+    }
+    if status is not None:
+        ergebnis["status"] = status
+    return ergebnis
 
 
 @pytest.fixture

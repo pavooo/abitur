@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Themen{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-xl font-semibold">Themenbrowser</h1>
+<div class="grid gap-6 sm:grid-cols-[260px_1fr]">
+  <nav class="h-fit rounded-lg border border-slate-200 bg-white p-4 text-sm">
+    <ul>
+      {% for thema in wurzelthemen %}
+        {% include "archiv/_thema_knoten.html" with thema=thema %}
+      {% endfor %}
+    </ul>
+  </nav>
+  <div id="treffer">
+    {% if ausgewaehlte_kennung %}
+      {% include "archiv/_treffer_liste.html" %}
+    {% else %}
+      <p class="text-sm text-slate-500">Thema auswählen, um passende Teilaufgaben zu sehen.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

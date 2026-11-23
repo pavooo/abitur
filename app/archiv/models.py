@@ -32,10 +32,18 @@ class Thema(models.Model):
         on_delete=models.CASCADE,
         related_name="kinder",
     )
+
+    class Kursniveau(models.TextChoices):
+        ALLE = "alle", "Alle Kursarten"
+        LK = "LK", "Nur Leistungskurs"
+
     kennung = models.CharField("Kennung", max_length=200)
     name = models.CharField("Name", max_length=200)
     synonyme = ArrayField(
         models.CharField(max_length=100), verbose_name="Synonyme", default=list, blank=True
+    )
+    kursniveau = models.CharField(
+        "Kursniveau", max_length=10, choices=Kursniveau.choices, default=Kursniveau.ALLE
     )
 
     class Meta:
@@ -68,6 +76,10 @@ class Klausur(models.Model):
         GK = "GK", "Grundkurs"
         LK = "LK", "Leistungskurs"
 
+    class Hilfsmittel(models.TextChoices):
+        TR = "TR", "Taschenrechner (WTR/GTR)"
+        CAS = "CAS", "Computeralgebrasystem"
+
     fach = models.ForeignKey(
         Fach, verbose_name="Fach", on_delete=models.PROTECT, related_name="klausuren"
     )
@@ -76,6 +88,7 @@ class Klausur(models.Model):
     termin = models.CharField("Termin", max_length=20, choices=Termin.choices)
     variante = models.CharField("Variante", max_length=50, blank=True, default="")
     titel = models.CharField("Titel", max_length=200)
+    hilfsmittel = models.CharField("Hilfsmittel", max_length=3, choices=Hilfsmittel.choices)
     pdf = models.FileField("Klausur-PDF", upload_to="klausuren/")
     erwartungshorizont_pdf = models.FileField(
         "Erwartungshorizont-PDF", upload_to="erwartungshorizonte/", null=True, blank=True
@@ -113,6 +126,15 @@ class AufgabeQuerySet(models.QuerySet):
 
 
 class Aufgabe(models.Model):
+    class Pruefungsteil(models.TextChoices):
+        HILFSMITTELFREI = "hilfsmittelfrei", "Hilfsmittelfrei"
+        MIT_HILFSMITTELN = "mit_hilfsmitteln", "Mit Hilfsmitteln"
+
+    class Aufgabenbereich(models.TextChoices):
+        PFLICHT = "pflicht", "Pflicht"
+        WAHLPFLICHT = "wahlpflicht", "Wahlpflicht"
+        KEINE_ANGABE = "keine_angabe", "Keine Angabe"
+
     klausur = models.ForeignKey(
         Klausur, verbose_name="Klausur", on_delete=models.CASCADE, related_name="aufgaben"
     )
@@ -120,6 +142,13 @@ class Aufgabe(models.Model):
     kontext = models.CharField("Kontext", max_length=200, blank=True)
     seite_von = models.PositiveSmallIntegerField("Seite von")
     seite_bis = models.PositiveSmallIntegerField("Seite bis")
+    pruefungsteil = models.CharField("Prüfungsteil", max_length=20, choices=Pruefungsteil.choices)
+    aufgabenbereich = models.CharField(
+        "Aufgabenbereich",
+        max_length=20,
+        choices=Aufgabenbereich.choices,
+        default=Aufgabenbereich.KEINE_ANGABE,
+    )
 
     objects = AufgabeQuerySet.as_manager()
 
@@ -138,6 +167,15 @@ class Aufgabe(models.Model):
 class TeilaufgabeQuerySet(models.QuerySet):
     def sichtbar_fuer(self, request):
         return self.filter(aufgabe__in=Aufgabe.objects.sichtbar_fuer(request))
+
+    def in_thema(self, kennung):
+        """Teilaufgaben, deren Thema `kennung` selbst ist oder einem seiner
+        Unterthemen entspricht. Die Kennung kodiert den Pfad im Themenbaum
+        (z. B. `analysis.diff.wendepunkt`), daher genügt ein Präfix-Vergleich
+        statt einer rekursiven Baumabfrage."""
+        return self.filter(
+            models.Q(themen__kennung=kennung) | models.Q(themen__kennung__startswith=f"{kennung}.")
+        ).distinct()
 
 
 class Teilaufgabe(models.Model):

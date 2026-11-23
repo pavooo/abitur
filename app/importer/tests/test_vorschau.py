@@ -4,7 +4,7 @@ from archiv.models import Fach, Klausur, Thema
 from importer.paket import entpacken
 from importer.vorschau import berechne_vorschau
 
-from .conftest import klausur_json, manifest_fuer, schreibe_paket_zip
+from .conftest import klausur_json, manifest_fuer, schreibe_paket_zip, taxonomie_json
 
 
 @pytest.mark.django_db
@@ -30,6 +30,7 @@ class TestVorschau:
             termin=Klausur.Termin.HAUPTTERMIN,
             variante="A",
             titel="Alt",
+            hilfsmittel=Klausur.Hilfsmittel.TR,
             pdf="klausuren/alt.pdf",
         )
         zip_pfad = schreibe_paket_zip(
@@ -91,10 +92,9 @@ class TestVorschau:
         zip_pfad = schreibe_paket_zip(
             tmp_path / "paket.zip",
             manifest=manifest_fuer("M"),
-            taxonomie={
-                "fach": "M",
-                "themen": [{"kennung": "analysis.diff.wendepunkt", "name": "Wendepunkt"}],
-            },
+            taxonomie=taxonomie_json(
+                "M", [{"kennung": "analysis.diff.wendepunkt", "name": "Wendepunkt"}]
+            ),
             klausuren=[
                 klausur_json(id="M-2024-LK-HT-A", fach="M", themen=["analysis.diff.wendepunkt"])
             ],
@@ -119,6 +119,87 @@ class TestVorschau:
 
         assert vorschau.hat_fehler is True
         assert any("weicht vom Paket-Fach" in f for f in vorschau.zeilen[0].fehler)
+
+    def test_taxonomie_mit_status_entwurf_wird_abgelehnt(self, tmp_path, fach_mathe):
+        zip_pfad = schreibe_paket_zip(
+            tmp_path / "paket.zip",
+            manifest=manifest_fuer("M"),
+            taxonomie=taxonomie_json(
+                "M", [{"kennung": "analysis", "name": "Analysis"}], status="entwurf"
+            ),
+        )
+        paket = entpacken(zip_pfad, tmp_path / "inhalt")
+
+        vorschau = berechne_vorschau(paket)
+
+        assert vorschau.hat_fehler is True
+        assert any("entwurf" in f for f in vorschau.allgemeine_fehler)
+
+    def test_taxonomie_mit_zu_pruefen_eintrag_wird_abgelehnt(self, tmp_path, fach_mathe):
+        zip_pfad = schreibe_paket_zip(
+            tmp_path / "paket.zip",
+            manifest=manifest_fuer("M"),
+            taxonomie=taxonomie_json(
+                "M",
+                [
+                    {
+                        "kennung": "analysis",
+                        "name": "Analysis",
+                        "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen",
+                    }
+                ],
+            ),
+        )
+        paket = entpacken(zip_pfad, tmp_path / "inhalt")
+
+        vorschau = berechne_vorschau(paket)
+
+        assert vorschau.hat_fehler is True
+        assert any("zu_pruefen" in f for f in vorschau.allgemeine_fehler)
+
+    def test_taxonomie_mit_unbekanntem_eltern_wird_abgelehnt(self, tmp_path, fach_mathe):
+        zip_pfad = schreibe_paket_zip(
+            tmp_path / "paket.zip",
+            manifest=manifest_fuer("M"),
+            taxonomie=taxonomie_json(
+                "M",
+                [
+                    {
+                        "kennung": "analysis.diff",
+                        "name": "Differentialrechnung",
+                        "eltern": "analysis",
+                    }
+                ],
+            ),
+        )
+        paket = entpacken(zip_pfad, tmp_path / "inhalt")
+
+        vorschau = berechne_vorschau(paket)
+
+        assert vorschau.hat_fehler is True
+        assert any("unbekanntes Eltern-Thema" in f for f in vorschau.allgemeine_fehler)
+
+    def test_taxonomie_eltern_bereits_in_db_ist_gueltig(self, tmp_path, fach_mathe):
+        Thema.objects.create(fach=fach_mathe, kennung="analysis", name="Analysis")
+        zip_pfad = schreibe_paket_zip(
+            tmp_path / "paket.zip",
+            manifest=manifest_fuer("M"),
+            taxonomie=taxonomie_json(
+                "M",
+                [
+                    {
+                        "kennung": "analysis.diff",
+                        "name": "Differentialrechnung",
+                        "eltern": "analysis",
+                    }
+                ],
+            ),
+        )
+        paket = entpacken(zip_pfad, tmp_path / "inhalt")
+
+        vorschau = berechne_vorschau(paket)
+
+        assert vorschau.hat_fehler is False
 
     def test_ein_fehler_blockiert_das_gesamte_paket(self, tmp_path, fach_mathe):
         zip_pfad = schreibe_paket_zip(

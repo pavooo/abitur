@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-from archiv.models import Fach, Klausur, Thema
+from archiv.models import Aufgabe, Fach, Klausur, Thema
 
 from .conftest import dummy_pdf, erstelle_aufgabe, erstelle_teilaufgabe
 
@@ -32,6 +32,19 @@ class TestThema:
         with pytest.raises(ValidationError):
             kind.full_clean()
 
+    def test_kursniveau_default_ist_alle(self, fach_mathe):
+        thema = Thema.objects.create(fach=fach_mathe, kennung="analysis", name="Analysis")
+        assert thema.kursniveau == Thema.Kursniveau.ALLE
+
+    def test_kursniveau_kann_auf_lk_gesetzt_werden(self, fach_mathe):
+        thema = Thema.objects.create(
+            fach=fach_mathe,
+            kennung="analysis.diff.logarithmus",
+            name="Logarithmusfunktion",
+            kursniveau=Thema.Kursniveau.LK,
+        )
+        assert thema.kursniveau == Thema.Kursniveau.LK
+
 
 @pytest.mark.django_db
 class TestKlausur:
@@ -43,6 +56,7 @@ class TestKlausur:
             termin=Klausur.Termin.HAUPTTERMIN,
             variante="A",
             titel="Analysis",
+            hilfsmittel=Klausur.Hilfsmittel.TR,
             pdf=dummy_pdf(),
         )
         with pytest.raises(IntegrityError):
@@ -53,6 +67,7 @@ class TestKlausur:
                 termin=Klausur.Termin.HAUPTTERMIN,
                 variante="A",
                 titel="Analysis (Duplikat)",
+                hilfsmittel=Klausur.Hilfsmittel.TR,
                 pdf=dummy_pdf(),
             )
 
@@ -64,6 +79,7 @@ class TestKlausur:
             termin=Klausur.Termin.HAUPTTERMIN,
             variante="A",
             titel="Analysis A",
+            hilfsmittel=Klausur.Hilfsmittel.TR,
             pdf=dummy_pdf(),
         )
         # Sollte keine IntegrityError auslösen, da sich die Variante unterscheidet.
@@ -74,6 +90,7 @@ class TestKlausur:
             termin=Klausur.Termin.HAUPTTERMIN,
             variante="B",
             titel="Analysis B",
+            hilfsmittel=Klausur.Hilfsmittel.TR,
             pdf=dummy_pdf(),
         )
 
@@ -99,3 +116,7 @@ class TestAufgabeUndTeilaufgabe:
         teilaufgabe.themen.set([thema_1, thema_2])
 
         assert set(teilaufgabe.themen.all()) == {thema_1, thema_2}
+
+    def test_aufgabenbereich_default_ist_keine_angabe(self, klausur_haupttermin):
+        aufgabe = erstelle_aufgabe(klausur_haupttermin)
+        assert aufgabe.aufgabenbereich == Aufgabe.Aufgabenbereich.KEINE_ANGABE

@@ -6,7 +6,7 @@ from importer.paket import entpacken
 from importer.transaktion import importiere_paket
 from importer.vorschaubilder import vorschaubild_verzeichnis
 
-from .conftest import klausur_json, manifest_fuer, schreibe_paket_zip
+from .conftest import klausur_json, manifest_fuer, schreibe_paket_zip, taxonomie_json
 
 
 @pytest.mark.django_db
@@ -31,7 +31,10 @@ class TestImportiereePaket:
         klausur = Klausur.objects.get(fach=fach_mathe, jahr=2024, kursart="LK", variante="A")
         assert klausur.titel == "Analysis"
         assert klausur.importprotokoll == protokoll
+        assert klausur.hilfsmittel == Klausur.Hilfsmittel.TR
         aufgabe = Aufgabe.objects.get(klausur=klausur)
+        assert aufgabe.pruefungsteil == Aufgabe.Pruefungsteil.MIT_HILFSMITTELN
+        assert aufgabe.aufgabenbereich == Aufgabe.Aufgabenbereich.KEINE_ANGABE
         teilaufgabe = Teilaufgabe.objects.get(aufgabe=aufgabe)
         assert teilaufgabe.themen.filter(kennung="analysis.diff.wendepunkt").exists()
 
@@ -110,16 +113,18 @@ class TestImportiereePaket:
         zip_pfad = schreibe_paket_zip(
             tmp_path / "paket.zip",
             manifest=manifest_fuer("M"),
-            taxonomie={
-                "fach": "M",
-                "themen": [
+            taxonomie=taxonomie_json(
+                "M",
+                [
+                    {"kennung": "analysis", "name": "Analysis"},
                     {
-                        "kennung": "analysis",
-                        "name": "Analysis",
-                        "themen": [{"kennung": "analysis.diff.wendepunkt", "name": "Wendepunkt"}],
-                    }
+                        "kennung": "analysis.diff.wendepunkt",
+                        "name": "Wendepunkt",
+                        "eltern": "analysis",
+                        "kursniveau": "LK",
+                    },
                 ],
-            },
+            ),
             klausuren=[
                 klausur_json(id="M-2024-LK-HT-A", fach="M", themen=["analysis.diff.wendepunkt"])
             ],
@@ -132,6 +137,7 @@ class TestImportiereePaket:
         eltern = Thema.objects.get(fach=fach_mathe, kennung="analysis")
         kind = Thema.objects.get(fach=fach_mathe, kennung="analysis.diff.wendepunkt")
         assert kind.eltern == eltern
+        assert kind.kursniveau == Thema.Kursniveau.LK
 
     def test_taxonomie_update_aktualisiert_bestehendes_thema(
         self, tmp_path, fach_mathe, admin_lehrkraft
@@ -140,7 +146,7 @@ class TestImportiereePaket:
         zip_pfad = schreibe_paket_zip(
             tmp_path / "paket.zip",
             manifest=manifest_fuer("M"),
-            taxonomie={"fach": "M", "themen": [{"kennung": "analysis", "name": "Neuer Name"}]},
+            taxonomie=taxonomie_json("M", [{"kennung": "analysis", "name": "Neuer Name"}]),
         )
         paket = entpacken(zip_pfad, tmp_path / "inhalt")
 

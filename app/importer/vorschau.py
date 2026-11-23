@@ -40,17 +40,19 @@ def berechne_vorschau(paket: EntpacktesPaket) -> VorschauErgebnis:
             "Bitte zuerst im Adminbereich anlegen."
         )
 
-    if paket.taxonomie is not None and paket.taxonomie["fach"] != fach_kuerzel:
-        allgemeine_fehler.append(
-            f"Fach {paket.taxonomie['fach']!r} in taxonomie.json weicht vom Paket-Fach "
-            f"{fach_kuerzel!r} (manifest.json) ab."
-        )
+    if paket.taxonomie is not None:
+        if paket.taxonomie["fach"] != fach_kuerzel:
+            allgemeine_fehler.append(
+                f"Fach {paket.taxonomie['fach']!r} in taxonomie.json weicht vom Paket-Fach "
+                f"{fach_kuerzel!r} (manifest.json) ab."
+            )
+        allgemeine_fehler.extend(_taxonomie_fehler(paket.taxonomie, fach_kuerzel))
 
     zeilen = [_zeile_fuer(eintrag, fach_kuerzel, paket.taxonomie) for eintrag in paket.klausuren]
 
     taxonomie_themen_anzahl = 0
     if paket.taxonomie is not None:
-        taxonomie_themen_anzahl = len(_kennungen_aus_taxonomie(paket.taxonomie.get("themen", [])))
+        taxonomie_themen_anzahl = len(_kennungen_aus_taxonomie(paket.taxonomie))
 
     return VorschauErgebnis(
         allgemeine_fehler=allgemeine_fehler,
@@ -59,18 +61,45 @@ def berechne_vorschau(paket: EntpacktesPaket) -> VorschauErgebnis:
     )
 
 
-def _kennungen_aus_taxonomie(knoten_liste) -> set:
-    kennungen = set()
-    for knoten in knoten_liste:
-        kennungen.add(knoten["kennung"])
-        kennungen |= _kennungen_aus_taxonomie(knoten.get("themen", []))
-    return kennungen
+def _kennungen_aus_taxonomie(taxonomie: dict) -> set:
+    return {knoten["kennung"] for knoten in taxonomie.get("themen", [])}
+
+
+def _taxonomie_fehler(taxonomie: dict, fach_kuerzel: str) -> list[str]:
+    """Prüft die Taxonomie selbst: fertig/geprüft (nicht Entwurf) und alle
+    `eltern`-Verweise lösbar – entweder innerhalb desselben Pakets oder bereits
+    als Thema in der Datenbank vorhanden."""
+    fehler = []
+
+    if taxonomie.get("status") == "entwurf":
+        fehler.append(
+            "taxonomie.json hat den Status 'entwurf' – die App importiert nur fertige, "
+            "geprüfte Daten."
+        )
+
+    knoten_mit_zu_pruefen = [k["kennung"] for k in taxonomie.get("themen", []) if "zu_pruefen" in k]
+    if knoten_mit_zu_pruefen:
+        fehler.append(
+            "taxonomie.json enthält noch zu prüfende Themen (zu_pruefen): "
+            + ", ".join(sorted(knoten_mit_zu_pruefen))
+        )
+
+    kennungen_im_paket = _kennungen_aus_taxonomie(taxonomie)
+    bekannte_kennungen = set(
+        Thema.objects.filter(fach__kuerzel=fach_kuerzel).values_list("kennung", flat=True)
+    )
+    for knoten in taxonomie.get("themen", []):
+        eltern = knoten.get("eltern")
+        if eltern is not None and eltern not in kennungen_im_paket | bekannte_kennungen:
+            fehler.append(f"Thema {knoten['kennung']!r}: unbekanntes Eltern-Thema {eltern!r}.")
+
+    return fehler
 
 
 def _bekannte_themen_kennungen(fach: Fach, taxonomie: dict | None) -> set:
     kennungen = set(Thema.objects.filter(fach=fach).values_list("kennung", flat=True))
     if taxonomie is not None:
-        kennungen |= _kennungen_aus_taxonomie(taxonomie.get("themen", []))
+        kennungen |= _kennungen_aus_taxonomie(taxonomie)
     return kennungen
 
 
