@@ -1,0 +1,34 @@
+# Für Nginx Proxy Manager (NPM, Compose-Projekt "webprojekt", Netzwerk
+# "webprojekt_default"). NPM verwaltet Domain/TLS/den Haupt-Proxy selbst über
+# die Weboberfläche – hier wird nur der zusätzliche Block für die geschützte
+# Dateiauslieferung ergänzt.
+#
+# Einrichtung in der NPM-Weboberfläche:
+#   1. "Proxy Hosts" → "Add Proxy Host":
+#      - Domain: die echte Domain der App
+#      - Forward Hostname / IP: web
+#      - Forward Port: 8000
+#      - SSL-Tab: Zertifikat wie bei den anderen Proxy Hosts (Let's Encrypt o. ä.)
+#   2. Tab "Advanced" → "Custom Nginx Configuration": den Block unten einfügen.
+#   3. Voraussetzung dafür: das media-Volume ("abitur_media", read-only) muss
+#      im Compose-Projekt "webprojekt" (dort, wo NPM selbst definiert ist) als
+#      zusätzliches Volume am NPM-Container eingebunden werden, exakt an dem
+#      Pfad, der unten bei `alias` steht:
+#        services:
+#          app:  # oder wie der NPM-Service dort heißt
+#            volumes:
+#              - abitur_media:/media-geschuetzt:ro
+#        volumes:
+#          abitur_media:
+#            external: true
+#      Danach das webprojekt-Compose-Projekt neu starten (`docker compose up -d`),
+#      damit NPM das Volume tatsächlich gemountet hat.
+
+client_max_body_size 50m;  # Import-Pakete (ZIPs) können mehrere Klausur-PDFs enthalten.
+
+# Niemals direkt auslieferbar – nur per X-Accel-Redirect aus archiv/dateien.py.
+# Pfad muss exakt zu settings.GESCHUETZTE_MEDIEN_INTERNER_PFAD passen.
+location /geschuetzte-medien/ {
+    internal;
+    alias /media-geschuetzt/;
+}

@@ -51,6 +51,12 @@ MIDDLEWARE = [
     "accounts.middleware.SusSessionMiddleware",
     "axes.middleware.AxesMiddleware",
 ]
+if not DEBUG:
+    # Direkt nach SecurityMiddleware, wie von WhiteNoise gefordert. Nur in Produktion
+    # aktiv: im Dev-Modus liefert runserver statische Dateien ohne vorheriges
+    # collectstatic aus, WhiteNoise/CompressedManifestStaticFilesStorage würde dort
+    # bei jeder neuen Datei ein collectstatic erzwingen und den Workflow verlangsamen.
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -103,6 +109,17 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            if not DEBUG
+            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+        )
+    },
+}
+
 # Klausur-PDFs & Vorschaubilder liegen außerhalb des Webroots. MEDIA_URL wird
 # bewusst nicht in config/urls.py eingebunden – Auslieferung nur über eine
 # Rechteprüfungs-View (folgt in Phase 5/6), nie direkt über den Webserver.
@@ -136,3 +153,6 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+    # Nötig, da Django den Origin-Header sonst gegen den (internen, von nginx
+    # proxyten) Host prüft – ohne dies schlägt jedes POST/PUT/DELETE mit 403 fehl.
+    CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])

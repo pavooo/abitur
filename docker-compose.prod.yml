@@ -1,0 +1,72 @@
+# Produktions-Compose für den Hetzner-Server. Läuft hinter dem bereits
+# vorhandenen Nginx Proxy Manager (NPM, eigenes Compose-Projekt "webprojekt",
+# nicht Teil dieses Repos).
+#
+# Einmalig vor dem ersten Start (siehe docker/DEPLOYMENT.md für Details):
+#   1. .env mit Produktionswerten anlegen (DJANGO_DEBUG=False, echte Domain
+#      in DJANGO_ALLOWED_HOSTS/DJANGO_CSRF_TRUSTED_ORIGINS, starkes
+#      DJANGO_SECRET_KEY, starkes POSTGRES_PASSWORD).
+#   2. In NPM einen Proxy Host anlegen: Forward Hostname "web", Forward Port
+#      "8000" (erreichbar, weil beide im Netzwerk "webprojekt_default" hängen).
+#   3. media-Volume ("abitur_media") read-only in NPMs eigenes Compose-Projekt
+#      einbinden und den Custom-Nginx-Konfiguration-Block aus
+#      docker/nginx/abitur-npm-custom-location.conf.beispiel im Proxy Host
+#      (Tab "Advanced") eintragen.
+#
+# Start/Update: docker compose -f docker-compose.prod.yml up -d --build
+#
+# Projektname fest auf "abitur" gesetzt (unabhängig vom Verzeichnisnamen beim
+# Klonen) – damit heißt das media-Volume immer deterministisch "abitur_media".
+name: abitur
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    command: >
+      gunicorn config.wsgi:application
+      --chdir app
+      --bind 0.0.0.0:8000
+      --workers ${GUNICORN_WORKERS:-3}
+      --timeout 60
+      --access-logfile -
+      --error-logfile -
+    volumes:
+      - media:/code/media
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - nginz
+
+volumes:
+  db-data:
+  media:
+
+networks:
+  default:
+  # Netzwerk des bestehenden Nginx Proxy Manager (NPM) – "webprojekt_default"
+  # ist das Default-Netzwerk von dessen eigenem Compose-Projekt. Damit ist der
+  # web-Service in NPM als Forward Hostname "web", Forward Port "8000" erreichbar.
+  nginz:
+    name: webprojekt_default
+    external: true

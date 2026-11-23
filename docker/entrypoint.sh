@@ -2,6 +2,7 @@
 set -eu
 
 python app/manage.py migrate --noinput
-tailwindcss -i app/static/css/input.css -o app/static/css/tailwind.css
+tailwindcss -i app/tailwind/input.css -o app/static/css/tailwind.css
+python app/manage.py collectstatic --noinput
 
 exec "$@"

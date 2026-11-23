@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # Lädt (einmalig) das passende Tailwind-CLI-Standalone-Binary herunter und führt es aus.
 # Kein Node/npm nötig. Nutzung z. B.:
-#   scripts/tailwindcss.sh -i app/static/css/input.css -o app/static/css/tailwind.css --watch
+#   scripts/tailwindcss.sh -i app/tailwind/input.css -o app/static/css/tailwind.css --watch
 set -eu
 
 TAILWIND_VERSION="4.3.5"
