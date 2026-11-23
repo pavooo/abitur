@@ -1,0 +1,42 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Import-Protokoll{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Import-Protokoll</h1>
+<table class="w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">Paket</th>
+      <th class="px-4 py-2">Lehrkraft</th>
+      <th class="px-4 py-2">Zeitpunkt</th>
+      <th class="px-4 py-2">Ergebnis</th>
+      <th class="px-4 py-2">Neu</th>
+      <th class="px-4 py-2">Aktualisiert</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for protokoll in protokolle %}
+      <tr class="border-t border-slate-100">
+        <td class="px-4 py-2">{{ protokoll.paketname }}</td>
+        <td class="px-4 py-2">{{ protokoll.lehrkraft.email }}</td>
+        <td class="px-4 py-2">{{ protokoll.zeitpunkt }}</td>
+        <td class="px-4 py-2">
+          {% if protokoll.ergebnis == "erfolgreich" %}
+            <span class="text-green-700">{{ protokoll.get_ergebnis_display }}</span>
+          {% else %}
+            <span class="text-red-700">{{ protokoll.get_ergebnis_display }}</span>
+          {% endif %}
+          {% if protokoll.fehlermeldung %}
+            <p class="mt-1 text-xs text-red-700">{{ protokoll.fehlermeldung }}</p>
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">{{ protokoll.anzahl_neu }}</td>
+        <td class="px-4 py-2">{{ protokoll.anzahl_aktualisiert }}</td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="6">Noch keine Importe.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

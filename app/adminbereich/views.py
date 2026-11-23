@@ -3,9 +3,22 @@ from archiv.models import Fach
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from importer.models import Importprotokoll
+from importer.paket import PaketFehler, entpacken
+from importer.staging import neues_token, staging_aufraeumen, staging_verzeichnis
+from importer.transaktion import importiere_paket
+from importer.vorschau import berechne_vorschau
 
 from .decorators import admin_erforderlich
-from .forms import FachErstellenForm, LehrkraftFaecherForm, ZugangscodeErstellenForm
+from .forms import (
+    FachErstellenForm,
+    ImportUploadForm,
+    LehrkraftFaecherForm,
+    ZugangscodeErstellenForm,
+)
+
+STAGING_TOKEN_SESSION_KEY = "import_staging_token"
+STAGING_PAKETNAME_SESSION_KEY = "import_staging_paketname"
 
 
 @admin_erforderlich
@@ -111,3 +124,86 @@ def zugangscode_sperren_umschalten(request, pk):
     else:
         messages.success(request, f"Zugangscode „{zugangscode.bezeichnung}“ wurde entsperrt.")
     return redirect("adminbereich:zugangscode_liste")
+
+
+@admin_erforderlich
+def import_hochladen(request):
+    alter_token = request.session.get(STAGING_TOKEN_SESSION_KEY)
+    if alter_token:
+        staging_aufraeumen(alter_token)
+        del request.session[STAGING_TOKEN_SESSION_KEY]
+
+    if request.method == "POST":
+        form = ImportUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            hochgeladene_datei = form.cleaned_data["paket"]
+            token = neues_token()
+            staging_pfad = staging_verzeichnis(token)
+            staging_pfad.mkdir(parents=True, exist_ok=True)
+            zip_pfad = staging_pfad / "paket.zip"
+            with open(zip_pfad, "wb") as ziel:
+                for chunk in hochgeladene_datei.chunks():
+                    ziel.write(chunk)
+
+            try:
+                paket = entpacken(zip_pfad, staging_pfad / "inhalt")
+            except PaketFehler as exc:
+                staging_aufraeumen(token)
+                form.add_error(None, str(exc))
+            else:
+                vorschau = berechne_vorschau(paket)
+                request.session[STAGING_TOKEN_SESSION_KEY] = token
+                request.session[STAGING_PAKETNAME_SESSION_KEY] = hochgeladene_datei.name
+                return render(
+                    request,
+                    "adminbereich/import_vorschau.html",
+                    {"vorschau": vorschau, "paketname": hochgeladene_datei.name, "token": token},
+                )
+    else:
+        form = ImportUploadForm()
+
+    return render(request, "adminbereich/import_hochladen.html", {"form": form})
+
+
+@admin_erforderlich
+@require_POST
+def import_bestaetigen(request):
+    token = request.session.get(STAGING_TOKEN_SESSION_KEY)
+    paketname = request.session.get(STAGING_PAKETNAME_SESSION_KEY, "paket.zip")
+    gesendeter_token = request.POST.get("token")
+
+    if not token or token != gesendeter_token:
+        messages.error(
+            request, "Der Importvorgang ist abgelaufen. Bitte das Paket erneut hochladen."
+        )
+        return redirect("adminbereich:import_hochladen")
+
+    staging_pfad = staging_verzeichnis(token)
+    try:
+        paket = entpacken(staging_pfad / "paket.zip", staging_pfad / "inhalt")
+        vorschau = berechne_vorschau(paket)
+        if vorschau.hat_fehler:
+            messages.error(request, "Das Paket enthält Fehler und wurde nicht importiert.")
+            return redirect("adminbereich:import_hochladen")
+
+        protokoll = importiere_paket(paket, lehrkraft=request.user, paketname=paketname)
+    finally:
+        staging_aufraeumen(token)
+        request.session.pop(STAGING_TOKEN_SESSION_KEY, None)
+        request.session.pop(STAGING_PAKETNAME_SESSION_KEY, None)
+
+    if protokoll.ergebnis == Importprotokoll.Ergebnis.ERFOLGREICH:
+        messages.success(
+            request,
+            f"Import erfolgreich: {protokoll.anzahl_neu} neu, "
+            f"{protokoll.anzahl_aktualisiert} aktualisiert.",
+        )
+    else:
+        messages.error(request, f"Import fehlgeschlagen: {protokoll.fehlermeldung}")
+    return redirect("adminbereich:import_protokoll_liste")
+
+
+@admin_erforderlich
+def import_protokoll_liste(request):
+    protokolle = Importprotokoll.objects.select_related("lehrkraft").all()
+    return render(request, "adminbereich/import_protokoll_liste.html", {"protokolle": protokolle})

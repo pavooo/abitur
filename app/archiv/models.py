@@ -80,6 +80,14 @@ class Klausur(models.Model):
     erwartungshorizont_pdf = models.FileField(
         "Erwartungshorizont-PDF", upload_to="erwartungshorizonte/", null=True, blank=True
     )
+    importprotokoll = models.ForeignKey(
+        "importer.Importprotokoll",
+        verbose_name="Importprotokoll",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="klausuren",
+    )
     erstellt_am = models.DateTimeField(auto_now_add=True)
 
     objects = KlausurQuerySet.as_manager()

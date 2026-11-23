@@ -27,6 +27,8 @@ ADMIN_URLS = [
     "adminbereich:lehrkraft_liste",
     "adminbereich:fach_liste",
     "adminbereich:zugangscode_liste",
+    "adminbereich:import_hochladen",
+    "adminbereich:import_protokoll_liste",
 ]
 
 

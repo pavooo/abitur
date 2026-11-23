@@ -1,0 +1,75 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Import-Vorschau{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-2 text-xl font-semibold">Vorschau: {{ paketname }}</h1>
+
+{% if vorschau.taxonomie_themen_anzahl %}
+  <p class="mb-4 text-sm text-slate-600">
+    Taxonomie-Update enthalten: {{ vorschau.taxonomie_themen_anzahl }} Themen.
+  </p>
+{% endif %}
+
+{% if vorschau.allgemeine_fehler %}
+  <ul class="mb-6 space-y-2">
+    {% for fehler in vorschau.allgemeine_fehler %}
+      <li class="rounded-md bg-red-100 px-4 py-3 text-sm text-red-800">{{ fehler }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<table class="mb-6 w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">Klausur</th>
+      <th class="px-4 py-2">Fach</th>
+      <th class="px-4 py-2">Jahr</th>
+      <th class="px-4 py-2">Kursart</th>
+      <th class="px-4 py-2">Termin</th>
+      <th class="px-4 py-2">Variante</th>
+      <th class="px-4 py-2">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for zeile in vorschau.zeilen %}
+      <tr class="border-t border-slate-100 {% if zeile.status == 'fehler' %}bg-red-50{% endif %}">
+        <td class="px-4 py-2">{{ zeile.titel }}</td>
+        <td class="px-4 py-2">{{ zeile.fach_kuerzel }}</td>
+        <td class="px-4 py-2">{{ zeile.jahr }}</td>
+        <td class="px-4 py-2">{{ zeile.kursart }}</td>
+        <td class="px-4 py-2">{{ zeile.termin }}</td>
+        <td class="px-4 py-2">{{ zeile.variante }}</td>
+        <td class="px-4 py-2">
+          {% if zeile.status == "neu" %}
+            <span class="text-green-700">Neu</span>
+          {% elif zeile.status == "aktualisiert" %}
+            <span class="text-amber-700">Aktualisiert</span>
+          {% else %}
+            <span class="text-red-700">Fehler</span>
+          {% endif %}
+          {% for fehler in zeile.fehler %}
+            <p class="mt-1 text-xs text-red-700">{{ fehler }}</p>
+          {% endfor %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="7">Keine Klausuren im Paket.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if vorschau.hat_fehler %}
+  <p class="text-sm text-red-700">
+    Das Paket enthält Fehler und kann nicht importiert werden. Bitte korrigieren und erneut hochladen.
+  </p>
+{% else %}
+  <form method="post" action="{% url 'adminbereich:import_bestaetigen' %}">
+    {% csrf_token %}
+    <input type="hidden" name="token" value="{{ token }}">
+    <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+      Import bestätigen
+    </button>
+  </form>
+{% endif %}
+{% endblock %}

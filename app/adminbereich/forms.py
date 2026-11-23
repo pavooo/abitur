@@ -23,3 +23,7 @@ class ZugangscodeErstellenForm(TailwindFormMixin, forms.Form):
     ablaufdatum = forms.DateField(
         label="Ablaufdatum", widget=forms.DateInput(attrs={"type": "date"})
     )
+
+
+class ImportUploadForm(TailwindFormMixin, forms.Form):
+    paket = forms.FileField(label="Import-Paket (ZIP)")

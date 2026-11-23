@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abiturklausuren-archiv.local/schema/taxonomie.schema.json",
+  "title": "Taxonomie",
+  "type": "object",
+  "required": ["fach", "themen"],
+  "additionalProperties": false,
+  "properties": {
+    "fach": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "themen": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/thema" }
+    }
+  },
+  "$defs": {
+    "thema": {
+      "type": "object",
+      "required": ["kennung", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "kennung": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(\\.[a-z0-9]+)*$",
+          "description": "Stabile, vollständige Kennung (z. B. 'analysis.diff.wendepunkt')."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "synonyme": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "default": []
+        },
+        "themen": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/thema" },
+          "default": []
+        }
+      }
+    }
+  }
+}

@@ -20,6 +20,7 @@ db.sqlite3
 zerlegung/eingang/
 zerlegung/pakete/
 media/
+import_staging/
 
 # Editor / OS
 .DS_Store

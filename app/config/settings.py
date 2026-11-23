@@ -33,6 +33,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "accounts",
     "archiv",
+    "importer",
     "adminbereich",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -106,6 +107,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Rechteprüfungs-View (folgt in Phase 5/6), nie direkt über den Webserver.
 MEDIA_URL = "media/"
 MEDIA_ROOT = REPO_ROOT / "media"
+
+# Zwischenspeicher für hochgeladene Import-Pakete zwischen Vorschau und Bestätigung.
+IMPORT_STAGING_ROOT = REPO_ROOT / "import_staging"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

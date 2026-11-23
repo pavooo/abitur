@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abiturklausuren-archiv.local/schema/manifest.schema.json",
+  "title": "Import-Manifest",
+  "type": "object",
+  "required": ["schema_version", "fach", "erstellt_am"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version der von diesem Paket verwendeten Schemata."
+    },
+    "fach": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10,
+      "description": "Kürzel des Fachs, für das dieses Paket gilt (z. B. 'M')."
+    },
+    "erstellt_am": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}
