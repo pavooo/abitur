@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid gap-8 sm:grid-cols-[180px_1fr]">
+  <nav class="space-y-1 text-sm">
+    <a href="{% url 'adminbereich:dashboard' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Dashboard</a>
+    <a href="{% url 'adminbereich:lehrkraft_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Lehrkräfte</a>
+    <a href="{% url 'adminbereich:fach_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Fächer</a>
+    <a href="{% url 'adminbereich:zugangscode_liste' %}" class="block rounded px-3 py-2 hover:bg-slate-100">Zugangscodes</a>
+  </nav>
+  <div>
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% load static %}<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Abiturklausuren-Archiv{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="bg-slate-800 text-white">
+    <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
+      <a href="{% url 'accounts:login_waehlen' %}" class="font-semibold">Abiturklausuren-Archiv</a>
+      <nav class="flex items-center gap-4 text-sm">
+        {% if request.user.is_authenticated %}
+          <span>{{ request.user.email }}</span>
+          {% if request.user.ist_admin %}
+            <a href="{% url 'adminbereich:dashboard' %}" class="hover:underline">Adminbereich</a>
+          {% endif %}
+          <a href="{% url 'accounts:logout' %}" class="hover:underline">Abmelden</a>
+        {% elif request.sus_zugangscode %}
+          <span>{{ request.sus_zugangscode.fach.name }}</span>
+          <a href="{% url 'accounts:logout' %}" class="hover:underline">Abmelden</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+    {% if messages %}
+      <ul class="mb-6 space-y-2">
+        {% for message in messages %}
+          <li class="rounded-md px-4 py-3 text-sm {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-slate-100 text-slate-800{% endif %}">
+            {{ message }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

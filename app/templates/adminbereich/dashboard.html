@@ -1,0 +1,25 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Adminbereich{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Dashboard</h1>
+<dl class="grid gap-4 sm:grid-cols-2">
+  <div class="rounded-lg border border-slate-200 bg-white p-4">
+    <dt class="text-sm text-slate-500">Ausstehende Freischaltungen</dt>
+    <dd class="text-2xl font-semibold">{{ anzahl_ausstehend }}</dd>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-4">
+    <dt class="text-sm text-slate-500">Lehrkräfte</dt>
+    <dd class="text-2xl font-semibold">{{ anzahl_lehrkraefte }}</dd>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-4">
+    <dt class="text-sm text-slate-500">Fächer</dt>
+    <dd class="text-2xl font-semibold">{{ anzahl_faecher }}</dd>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-4">
+    <dt class="text-sm text-slate-500">Zugangscodes</dt>
+    <dd class="text-2xl font-semibold">{{ anzahl_codes }}</dd>
+  </div>
+</dl>
+{% endblock %}

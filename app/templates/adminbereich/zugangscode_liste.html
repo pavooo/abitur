@@ -1,0 +1,56 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Zugangscodes{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Zugangscodes</h1>
+
+<table class="mb-8 w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">Bezeichnung</th>
+      <th class="px-4 py-2">Fach</th>
+      <th class="px-4 py-2">Ablaufdatum</th>
+      <th class="px-4 py-2">Status</th>
+      <th class="px-4 py-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for zugangscode in zugangscodes %}
+      <tr class="border-t border-slate-100">
+        <td class="px-4 py-2">{{ zugangscode.bezeichnung }}</td>
+        <td class="px-4 py-2">{{ zugangscode.fach.kuerzel }}</td>
+        <td class="px-4 py-2">{{ zugangscode.ablaufdatum }}</td>
+        <td class="px-4 py-2">
+          {% if zugangscode.gesperrt %}
+            <span class="text-red-700">Gesperrt</span>
+          {% elif zugangscode.ist_gueltig %}
+            <span class="text-green-700">Gültig</span>
+          {% else %}
+            <span class="text-slate-500">Abgelaufen</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">
+          <form method="post" action="{% url 'adminbereich:zugangscode_sperren_umschalten' zugangscode.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="underline">
+              {% if zugangscode.gesperrt %}Entsperren{% else %}Sperren{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="5">Keine Zugangscodes vorhanden.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="mb-4 text-lg font-semibold">Zugangscode erstellen</h2>
+<form method="post" class="max-w-sm space-y-4">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+    Erstellen
+  </button>
+</form>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}{{ lehrkraft.email }}{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-2 text-xl font-semibold">{{ lehrkraft.email }}</h1>
+<p class="mb-6 text-sm text-slate-600">
+  Status: <strong>{{ lehrkraft.get_status_display }}</strong>
+  · Admin-Recht: <strong>{% if lehrkraft.ist_admin %}Ja{% else %}Nein{% endif %}</strong>
+</p>
+
+<div class="flex flex-wrap gap-3">
+  {% if lehrkraft.status != "aktiv" %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="aktion" value="freischalten">
+      <button type="submit" class="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800">
+        Freischalten
+      </button>
+    </form>
+  {% endif %}
+  {% if lehrkraft.status != "gesperrt" %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="aktion" value="sperren">
+      <button type="submit" class="rounded-md bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-800">
+        Sperren
+      </button>
+    </form>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="aktion" value="admin_umschalten">
+    <button type="submit" class="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
+      {% if lehrkraft.ist_admin %}Admin-Recht entziehen{% else %}Admin-Recht geben{% endif %}
+    </button>
+  </form>
+</div>
+
+<h2 class="mt-8 mb-4 text-lg font-semibold">Fächer</h2>
+<form method="post" class="max-w-sm space-y-4">
+  {% csrf_token %}
+  <input type="hidden" name="aktion" value="faecher_speichern">
+  {% include "includes/form_fields.html" with form=faecher_form %}
+  <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+    Speichern
+  </button>
+</form>
+{% endblock %}

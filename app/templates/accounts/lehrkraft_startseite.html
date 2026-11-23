@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Startseite{% endblock %}
+
+{% block content %}
+<h1 class="text-xl font-semibold">Willkommen, {{ request.user.name }}</h1>
+<p class="mt-4 text-sm text-slate-600">
+  Die Klausursuche folgt in einer späteren Phase.
+</p>
+{% endblock %}

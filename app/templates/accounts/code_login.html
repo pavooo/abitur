@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Zugangscode{% endblock %}
+
+{% block content %}
+<h1 class="mb-6 text-xl font-semibold">Anmeldung mit Zugangscode</h1>
+<form method="post" class="max-w-sm space-y-4">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button type="submit"
+          class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+    Anmelden
+  </button>
+</form>
+{% endblock %}

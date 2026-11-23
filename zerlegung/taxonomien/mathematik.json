@@ -1,0 +1,1481 @@
+{
+  "schema_version": 1,
+  "fach": "M",
+  "status": "entwurf",
+  "hinweis": "Entwurf; in Phase 4 gegen Kernlehrpläne 2014/2023 und Abitur-Vorgaben prüfen.",
+  "themen": [
+    {
+      "kennung": "analysis",
+      "name": "Funktionen und Analysis",
+      "eltern": null,
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.fkt",
+      "name": "Funktionsklassen & Eigenschaften",
+      "eltern": "analysis",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.fkt.ganzrational",
+      "name": "Ganzrationale Funktionen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Polynom",
+        "Polynomfunktion"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.exponential",
+      "name": "Exponentialfunktionen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "e-Funktion",
+        "natürliche Exponentialfunktion"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.logarithmus",
+      "name": "Logarithmusfunktion",
+      "eltern": "analysis.fkt",
+      "kursniveau": "LK",
+      "synonyme": [
+        "ln",
+        "natürlicher Logarithmus",
+        "Umkehrfunktion"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.zusammengesetzt",
+      "name": "Zusammengesetzte Funktionen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Produkt von Funktionen",
+        "Verkettung",
+        "x·e^(-x)"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.symmetrie",
+      "name": "Symmetrie",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "achsensymmetrisch",
+        "punktsymmetrisch"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.nullstellen",
+      "name": "Nullstellen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Ausklammern",
+        "Substitution",
+        "Satz vom Nullprodukt",
+        "Schnittpunkte mit der x-Achse"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.grenzverhalten",
+      "name": "Grenzverhalten & Asymptoten",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "für x gegen unendlich",
+        "Asymptote",
+        "langfristig",
+        "auf lange Sicht"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.scharen",
+      "name": "Funktionenscharen",
+      "eltern": "analysis.fkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Funktionenschar",
+        "Kurvenschar",
+        "Parameter"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.scharen.gemeinsame_punkte",
+      "name": "Gemeinsame Punkte einer Schar",
+      "eltern": "analysis.fkt.scharen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "alle Graphen der Schar verlaufen durch",
+        "unabhängig vom Parameter"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.scharen.parameterbestimmung",
+      "name": "Parameterbestimmung bei Scharen",
+      "eltern": "analysis.fkt.scharen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "für welchen Wert des Parameters"
+      ]
+    },
+    {
+      "kennung": "analysis.fkt.scharen.ortskurve",
+      "name": "Ortskurve",
+      "eltern": "analysis.fkt.scharen",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Ortslinie",
+        "Ortskurve der Extrempunkte"
+      ]
+    },
+    {
+      "kennung": "analysis.diff",
+      "name": "Differentialrechnung",
+      "eltern": "analysis",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.aenderungsrate",
+      "name": "Änderungsraten",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.aenderungsrate.mittlere",
+      "name": "Mittlere Änderungsrate",
+      "eltern": "analysis.diff.aenderungsrate",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Durchschnittsgeschwindigkeit",
+        "Sekantensteigung",
+        "Differenzenquotient"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.aenderungsrate.momentane",
+      "name": "Momentane Änderungsrate",
+      "eltern": "analysis.diff.aenderungsrate",
+      "kursniveau": "alle",
+      "synonyme": [
+        "lokale Änderungsrate",
+        "Momentangeschwindigkeit"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.aenderungsrate.grenzwert",
+      "name": "Ableitung als Grenzwert",
+      "eltern": "analysis.diff.aenderungsrate",
+      "kursniveau": "alle",
+      "synonyme": [
+        "h-Methode",
+        "Differentialquotient",
+        "Grenzwert des Differenzenquotienten"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.regeln",
+      "name": "Ableitungsregeln",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.regeln.grundregeln",
+      "name": "Grundregeln",
+      "eltern": "analysis.diff.regeln",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Potenzregel",
+        "Faktorregel",
+        "Summenregel"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.regeln.produktregel",
+      "name": "Produktregel",
+      "eltern": "analysis.diff.regeln",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.regeln.kettenregel",
+      "name": "Kettenregel",
+      "eltern": "analysis.diff.regeln",
+      "kursniveau": "alle",
+      "synonyme": [
+        "innere Ableitung",
+        "äußere Ableitung"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.monotonie",
+      "name": "Monotonie",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": [
+        "steigt",
+        "fällt",
+        "Zunahme",
+        "Abnahme",
+        "wächst"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.extrempunkte",
+      "name": "Extrempunkte",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.extrempunkte.berechnung",
+      "name": "Berechnung von Extrempunkten",
+      "eltern": "analysis.diff.extrempunkte",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Hochpunkt",
+        "Tiefpunkt",
+        "notwendige Bedingung",
+        "hinreichende Bedingung",
+        "maximal",
+        "minimal"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.extrempunkte.randextrema",
+      "name": "Globale Extrema & Randwerte",
+      "eltern": "analysis.diff.extrempunkte",
+      "kursniveau": "alle",
+      "synonyme": [
+        "globales Maximum",
+        "im Intervall",
+        "größter Wert im Zeitraum",
+        "Randwerte"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.wendepunkt",
+      "name": "Wendepunkte",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.wendepunkt.berechnung",
+      "name": "Berechnung von Wendepunkten",
+      "eltern": "analysis.diff.wendepunkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Wendestelle",
+        "Krümmungswechsel"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.wendepunkt.interpretation",
+      "name": "Interpretation von Wendepunkten",
+      "eltern": "analysis.diff.wendepunkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "stärkste Zunahme",
+        "stärkste Abnahme",
+        "maximale Änderungsrate",
+        "am stärksten steigt"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.wendepunkt.sattelpunkt",
+      "name": "Sattelpunkt",
+      "eltern": "analysis.diff.wendepunkt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Terrassenpunkt"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.kruemmung",
+      "name": "Krümmung",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Linkskurve",
+        "Rechtskurve",
+        "linksgekrümmt",
+        "rechtsgekrümmt"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale",
+      "name": "Tangenten & Normalen",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale.tangente_im_punkt",
+      "name": "Tangente in einem Punkt",
+      "eltern": "analysis.diff.tangente_normale",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Tangentengleichung",
+        "berührt"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale.tangente_von_aussen",
+      "name": "Tangente von einem äußeren Punkt",
+      "eltern": "analysis.diff.tangente_normale",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Tangente durch einen Punkt außerhalb",
+        "Berührpunkt gesucht"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale.wendetangente",
+      "name": "Wendetangente",
+      "eltern": "analysis.diff.tangente_normale",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Tangente im Wendepunkt"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale.normale",
+      "name": "Normale",
+      "eltern": "analysis.diff.tangente_normale",
+      "kursniveau": "alle",
+      "synonyme": [
+        "senkrecht zur Tangente"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.tangente_normale.steigungswinkel",
+      "name": "Steigungswinkel",
+      "eltern": "analysis.diff.tangente_normale",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Neigung",
+        "Winkel zur x-Achse",
+        "Steigung in Prozent"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.extremwertproblem",
+      "name": "Extremwertprobleme",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.extremwertproblem.geometrisch",
+      "name": "Geometrische Extremwertprobleme",
+      "eltern": "analysis.diff.extremwertproblem",
+      "kursniveau": "alle",
+      "synonyme": [
+        "maximaler Flächeninhalt",
+        "Rechteck unter dem Graphen",
+        "Dreieck maximal"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.extremwertproblem.sachkontext",
+      "name": "Extremwertprobleme im Sachkontext",
+      "eltern": "analysis.diff.extremwertproblem",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Kosten minimal",
+        "Gewinn maximal",
+        "optimal"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.funktionsbestimmung",
+      "name": "Funktionsbestimmung",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.funktionsbestimmung.steckbrief",
+      "name": "Steckbriefaufgaben",
+      "eltern": "analysis.diff.funktionsbestimmung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Bedingungen aufstellen",
+        "Rekonstruktion einer Funktion",
+        "Funktionsgleichung bestimmen"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.funktionsbestimmung.parameteranpassung",
+      "name": "Parameteranpassung",
+      "eltern": "analysis.diff.funktionsbestimmung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Bestimmen Sie k so, dass",
+        "Modell anpassen"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.graphisch",
+      "name": "Graphisches Ableiten & Argumentieren",
+      "eltern": "analysis.diff",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.diff.graphisch.ableitungsgraph",
+      "name": "Ableitungsgraph skizzieren",
+      "eltern": "analysis.diff.graphisch",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Skizzieren Sie den Graphen von f'",
+        "graphisches Ableiten"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.graphisch.zuordnen",
+      "name": "Graphen zuordnen",
+      "eltern": "analysis.diff.graphisch",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Ordnen Sie die Graphen zu",
+        "Funktion und Ableitung zuordnen"
+      ]
+    },
+    {
+      "kennung": "analysis.diff.graphisch.aussagen_beurteilen",
+      "name": "Aussagen über Graphen beurteilen",
+      "eltern": "analysis.diff.graphisch",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Beurteilen Sie die Aussage",
+        "wahr oder falsch",
+        "begründen Sie"
+      ]
+    },
+    {
+      "kennung": "analysis.int",
+      "name": "Integralrechnung",
+      "eltern": "analysis",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.int.rekonstruktion",
+      "name": "Rekonstruktion von Beständen",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.int.rekonstruktion.bestand",
+      "name": "Bestand aus Änderungsrate",
+      "eltern": "analysis.int.rekonstruktion",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Bestand zum Zeitpunkt t",
+        "Anfangsbestand",
+        "Bestandsfunktion"
+      ]
+    },
+    {
+      "kennung": "analysis.int.rekonstruktion.zu_abfluss",
+      "name": "Zu- und Abflussprozesse",
+      "eltern": "analysis.int.rekonstruktion",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Zuflussrate",
+        "Abflussrate",
+        "Füllmenge",
+        "Wassermenge"
+      ]
+    },
+    {
+      "kennung": "analysis.int.rekonstruktion.gesamtaenderung",
+      "name": "Gesamtänderung",
+      "eltern": "analysis.int.rekonstruktion",
+      "kursniveau": "alle",
+      "synonyme": [
+        "insgesamt zugenommen",
+        "zurückgelegte Strecke",
+        "Gesamtmenge"
+      ]
+    },
+    {
+      "kennung": "analysis.int.stammfunktion",
+      "name": "Stammfunktionen",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Aufleiten",
+        "Stammfunktion bestimmen"
+      ]
+    },
+    {
+      "kennung": "analysis.int.hauptsatz",
+      "name": "Hauptsatz der Differential- und Integralrechnung",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.int.flaeche",
+      "name": "Flächenberechnung",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.int.flaeche.unter_graph",
+      "name": "Fläche unter einem Graphen",
+      "eltern": "analysis.int.flaeche",
+      "kursniveau": "alle",
+      "synonyme": [
+        "orientierter Flächeninhalt",
+        "Flächenbilanz",
+        "mit Vorzeichen"
+      ]
+    },
+    {
+      "kennung": "analysis.int.flaeche.zwischen_graphen",
+      "name": "Fläche zwischen Graphen",
+      "eltern": "analysis.int.flaeche",
+      "kursniveau": "alle",
+      "synonyme": [
+        "eingeschlossene Fläche",
+        "zwischen zwei Kurven"
+      ]
+    },
+    {
+      "kennung": "analysis.int.flaeche.mit_parameter",
+      "name": "Flächen mit Parameter",
+      "eltern": "analysis.int.flaeche",
+      "kursniveau": "alle",
+      "synonyme": [
+        "für welches a hat die Fläche den Inhalt"
+      ]
+    },
+    {
+      "kennung": "analysis.int.mittelwert",
+      "name": "Mittelwert von Funktionen",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": [
+        "durchschnittlich",
+        "im Mittel",
+        "mittlerer Bestand"
+      ]
+    },
+    {
+      "kennung": "analysis.int.integralfunktion",
+      "name": "Integralfunktion",
+      "eltern": "analysis.int",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.int.uneigentlich",
+      "name": "Uneigentliche Integrale",
+      "eltern": "analysis.int",
+      "kursniveau": "LK",
+      "synonyme": [
+        "unbegrenzte Fläche",
+        "langfristig",
+        "für t gegen unendlich"
+      ]
+    },
+    {
+      "kennung": "analysis.int.rotationsvolumen",
+      "name": "Rotationsvolumen",
+      "eltern": "analysis.int",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Rotationskörper",
+        "Volumen bei Rotation um die x-Achse"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "analysis.modellierung",
+      "name": "Modellierung",
+      "eltern": "analysis",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "analysis.modellierung.exponentielles_wachstum",
+      "name": "Exponentielles Wachstum & Zerfall",
+      "eltern": "analysis.modellierung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Verdopplungszeit",
+        "Halbwertszeit",
+        "prozentuale Zunahme",
+        "Zerfall"
+      ]
+    },
+    {
+      "kennung": "analysis.modellierung.begrenztes_wachstum",
+      "name": "Begrenztes Wachstum",
+      "eltern": "analysis.modellierung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Sättigungsgrenze",
+        "Schranke",
+        "nähert sich an"
+      ]
+    },
+    {
+      "kennung": "analysis.modellierung.interpretation",
+      "name": "Interpretation im Sachzusammenhang",
+      "eltern": "analysis.modellierung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Bedeutung im Sachzusammenhang",
+        "interpretieren Sie"
+      ]
+    },
+    {
+      "kennung": "analysis.modellierung.modellkritik",
+      "name": "Modellkritik",
+      "eltern": "analysis.modellierung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Grenzen des Modells",
+        "Eignung des Modells beurteilen"
+      ]
+    },
+    {
+      "kennung": "geometrie",
+      "name": "Analytische Geometrie und Lineare Algebra",
+      "eltern": null,
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.vektoren",
+      "name": "Vektoren",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.vektoren.rechnen",
+      "name": "Rechnen mit Vektoren",
+      "eltern": "geometrie.vektoren",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Addition",
+        "Vervielfachung",
+        "Verbindungsvektor"
+      ]
+    },
+    {
+      "kennung": "geometrie.vektoren.betrag",
+      "name": "Betrag & Länge",
+      "eltern": "geometrie.vektoren",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Länge",
+        "Entfernung zweier Punkte",
+        "Abstand zweier Punkte"
+      ]
+    },
+    {
+      "kennung": "geometrie.vektoren.kollinearitaet",
+      "name": "Kollinearität",
+      "eltern": "geometrie.vektoren",
+      "kursniveau": "alle",
+      "synonyme": [
+        "parallel",
+        "Vielfaches",
+        "auf einer Linie"
+      ]
+    },
+    {
+      "kennung": "geometrie.vektoren.linearkombination",
+      "name": "Linearkombination & lineare Abhängigkeit",
+      "eltern": "geometrie.vektoren",
+      "kursniveau": "alle",
+      "synonyme": [
+        "linear abhängig",
+        "linear unabhängig",
+        "komplanar"
+      ]
+    },
+    {
+      "kennung": "geometrie.vektoren.teilpunkte",
+      "name": "Mittel- und Teilpunkte",
+      "eltern": "geometrie.vektoren",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Mittelpunkt",
+        "Schwerpunkt",
+        "im Verhältnis teilen"
+      ]
+    },
+    {
+      "kennung": "geometrie.geraden",
+      "name": "Geraden",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.geraden.aufstellen",
+      "name": "Geradengleichung aufstellen",
+      "eltern": "geometrie.geraden",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Gerade durch zwei Punkte",
+        "Parameterform"
+      ]
+    },
+    {
+      "kennung": "geometrie.geraden.punktprobe",
+      "name": "Punktprobe bei Geraden",
+      "eltern": "geometrie.geraden",
+      "kursniveau": "alle",
+      "synonyme": [
+        "liegt der Punkt auf der Geraden"
+      ]
+    },
+    {
+      "kennung": "geometrie.geraden.spurpunkte",
+      "name": "Spurpunkte von Geraden",
+      "eltern": "geometrie.geraden",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Durchstoßpunkt durch Koordinatenebene",
+        "trifft auf den Boden"
+      ]
+    },
+    {
+      "kennung": "geometrie.geraden.bewegung",
+      "name": "Bewegungen & Flugbahnen",
+      "eltern": "geometrie.geraden",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Flugbahn",
+        "Zeitparameter",
+        "Geschwindigkeit",
+        "gleichzeitig am selben Ort",
+        "Kollision"
+      ]
+    },
+    {
+      "kennung": "geometrie.geraden.geradenschar",
+      "name": "Geradenscharen",
+      "eltern": "geometrie.geraden",
+      "kursniveau": "LK",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen",
+      "name": "Ebenen",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen.parameterform",
+      "name": "Parameterform",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen.koordinatenform",
+      "name": "Koordinatenform",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen.normalenform",
+      "name": "Normalenform",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen.umwandlung",
+      "name": "Umwandlung von Ebenengleichungen",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.ebenen.punktprobe",
+      "name": "Punktprobe bei Ebenen",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "liegt der Punkt in der Ebene"
+      ]
+    },
+    {
+      "kennung": "geometrie.ebenen.spurpunkte_spurgeraden",
+      "name": "Spurpunkte & Spurgeraden",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Achsenabschnitte",
+        "Darstellung im Koordinatensystem"
+      ]
+    },
+    {
+      "kennung": "geometrie.ebenen.ebenenschar",
+      "name": "Ebenenscharen",
+      "eltern": "geometrie.ebenen",
+      "kursniveau": "LK",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.lage",
+      "name": "Lagebeziehungen",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.lage.gerade_gerade",
+      "name": "Lage Gerade–Gerade",
+      "eltern": "geometrie.lage",
+      "kursniveau": "alle",
+      "synonyme": [
+        "schneiden sich",
+        "parallel",
+        "identisch",
+        "windschief"
+      ]
+    },
+    {
+      "kennung": "geometrie.lage.gerade_ebene",
+      "name": "Lage Gerade–Ebene",
+      "eltern": "geometrie.lage",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Durchstoßpunkt",
+        "Schnittpunkt",
+        "liegt in der Ebene",
+        "parallel zur Ebene"
+      ]
+    },
+    {
+      "kennung": "geometrie.lage.ebene_ebene",
+      "name": "Lage Ebene–Ebene",
+      "eltern": "geometrie.lage",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Schnittgerade",
+        "parallele Ebenen"
+      ]
+    },
+    {
+      "kennung": "geometrie.skalarprodukt",
+      "name": "Skalarprodukt",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.skalarprodukt.orthogonalitaet",
+      "name": "Orthogonalität",
+      "eltern": "geometrie.skalarprodukt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "senkrecht",
+        "rechtwinklig",
+        "rechter Winkel"
+      ]
+    },
+    {
+      "kennung": "geometrie.skalarprodukt.normalenvektor",
+      "name": "Normalenvektor",
+      "eltern": "geometrie.skalarprodukt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Kreuzprodukt",
+        "Vektorprodukt"
+      ]
+    },
+    {
+      "kennung": "geometrie.winkel",
+      "name": "Winkel",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.winkel.zwischen_vektoren",
+      "name": "Winkel zwischen Vektoren",
+      "eltern": "geometrie.winkel",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Innenwinkel",
+        "Winkel im Dreieck"
+      ]
+    },
+    {
+      "kennung": "geometrie.winkel.gerade_ebene",
+      "name": "Winkel Gerade–Ebene",
+      "eltern": "geometrie.winkel",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Neigungswinkel",
+        "Einfallswinkel",
+        "Steigwinkel einer Flugbahn"
+      ]
+    },
+    {
+      "kennung": "geometrie.winkel.ebene_ebene",
+      "name": "Winkel Ebene–Ebene",
+      "eltern": "geometrie.winkel",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Neigung einer Dachfläche",
+        "Schnittwinkel zweier Ebenen"
+      ]
+    },
+    {
+      "kennung": "geometrie.abstand",
+      "name": "Abstände",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.abstand.punkt_ebene",
+      "name": "Abstand Punkt–Ebene",
+      "eltern": "geometrie.abstand",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Lotfußpunkt",
+        "Hessesche Normalform",
+        "Abstand zur Ebene"
+      ]
+    },
+    {
+      "kennung": "geometrie.abstand.punkt_gerade",
+      "name": "Abstand Punkt–Gerade",
+      "eltern": "geometrie.abstand",
+      "kursniveau": "alle",
+      "synonyme": [
+        "kürzeste Entfernung zu einer Linie"
+      ]
+    },
+    {
+      "kennung": "geometrie.abstand.windschiefe_geraden",
+      "name": "Abstand windschiefer Geraden",
+      "eltern": "geometrie.abstand",
+      "kursniveau": "LK",
+      "synonyme": [
+        "minimaler Abstand zweier Flugbahnen"
+      ]
+    },
+    {
+      "kennung": "geometrie.abstand.parallele_objekte",
+      "name": "Abstand paralleler Objekte",
+      "eltern": "geometrie.abstand",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Abstand paralleler Ebenen",
+        "Abstand paralleler Geraden"
+      ]
+    },
+    {
+      "kennung": "geometrie.spiegelung",
+      "name": "Spiegelungen",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.spiegelung.an_punkt",
+      "name": "Spiegelung an einem Punkt",
+      "eltern": "geometrie.spiegelung",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.spiegelung.an_ebene",
+      "name": "Spiegelung an einer Ebene",
+      "eltern": "geometrie.spiegelung",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Spiegelpunkt"
+      ]
+    },
+    {
+      "kennung": "geometrie.spiegelung.an_gerade",
+      "name": "Spiegelung an einer Geraden",
+      "eltern": "geometrie.spiegelung",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.figuren_koerper",
+      "name": "Figuren & Körper",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.figuren_koerper.vierecke_dreiecke",
+      "name": "Vierecke & Dreiecke",
+      "eltern": "geometrie.figuren_koerper",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Parallelogramm",
+        "Rechteck",
+        "Quadrat",
+        "Raute",
+        "gleichschenklig",
+        "Flächeninhalt eines Dreiecks"
+      ]
+    },
+    {
+      "kennung": "geometrie.figuren_koerper.pyramide_volumen",
+      "name": "Pyramiden & Volumen",
+      "eltern": "geometrie.figuren_koerper",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Grundfläche",
+        "Höhe",
+        "Spitze",
+        "Volumen"
+      ]
+    },
+    {
+      "kennung": "geometrie.figuren_koerper.schattenwurf",
+      "name": "Schattenwurf & Projektion",
+      "eltern": "geometrie.figuren_koerper",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Schatten",
+        "Lichtstrahl",
+        "Schattenpunkt",
+        "Projektion"
+      ]
+    },
+    {
+      "kennung": "geometrie.lgs",
+      "name": "Lineare Gleichungssysteme",
+      "eltern": "geometrie",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "geometrie.lgs.gauss",
+      "name": "Gauß-Verfahren",
+      "eltern": "geometrie.lgs",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Gaußalgorithmus",
+        "Stufenform"
+      ]
+    },
+    {
+      "kennung": "geometrie.lgs.loesbarkeit",
+      "name": "Lösbarkeit von LGS",
+      "eltern": "geometrie.lgs",
+      "kursniveau": "alle",
+      "synonyme": [
+        "eindeutig lösbar",
+        "unendlich viele Lösungen",
+        "keine Lösung",
+        "mit Parameter"
+      ]
+    },
+    {
+      "kennung": "stochastik",
+      "name": "Stochastik",
+      "eltern": null,
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.grundlagen",
+      "name": "Grundlagen",
+      "eltern": "stochastik",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.grundlagen.baumdiagramm",
+      "name": "Baumdiagramme & Pfadregeln",
+      "eltern": "stochastik.grundlagen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Pfadregel",
+        "mehrstufiges Zufallsexperiment"
+      ]
+    },
+    {
+      "kennung": "stochastik.grundlagen.laplace",
+      "name": "Laplace-Experimente",
+      "eltern": "stochastik.grundlagen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "gleichwahrscheinlich"
+      ]
+    },
+    {
+      "kennung": "stochastik.grundlagen.kombinatorik",
+      "name": "Kombinatorik",
+      "eltern": "stochastik.grundlagen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "mit Zurücklegen",
+        "ohne Zurücklegen",
+        "Binomialkoeffizient",
+        "Anordnungen"
+      ]
+    },
+    {
+      "kennung": "stochastik.grundlagen.gegenereignis",
+      "name": "Gegenereignis",
+      "eltern": "stochastik.grundlagen",
+      "kursniveau": "alle",
+      "synonyme": [
+        "mindestens einer",
+        "keiner",
+        "1 minus"
+      ]
+    },
+    {
+      "kennung": "stochastik.bedingt",
+      "name": "Bedingte Wahrscheinlichkeiten",
+      "eltern": "stochastik",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.bedingt.vierfeldertafel",
+      "name": "Vierfeldertafel",
+      "eltern": "stochastik.bedingt",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.bedingt.bedingte_wkt",
+      "name": "Bedingte Wahrscheinlichkeit",
+      "eltern": "stochastik.bedingt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "unter der Bedingung",
+        "falls",
+        "von denen"
+      ]
+    },
+    {
+      "kennung": "stochastik.bedingt.unabhaengigkeit",
+      "name": "Stochastische Unabhängigkeit",
+      "eltern": "stochastik.bedingt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "unabhängig",
+        "beeinflusst nicht"
+      ]
+    },
+    {
+      "kennung": "stochastik.bedingt.umgekehrter_baum",
+      "name": "Umgekehrtes Baumdiagramm",
+      "eltern": "stochastik.bedingt",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Satz von Bayes",
+        "positiv getestet und tatsächlich krank"
+      ]
+    },
+    {
+      "kennung": "stochastik.zufallsgroesse",
+      "name": "Zufallsgrößen",
+      "eltern": "stochastik",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.zufallsgroesse.verteilung",
+      "name": "Wahrscheinlichkeitsverteilung",
+      "eltern": "stochastik.zufallsgroesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Verteilung",
+        "Tabelle",
+        "Histogramm"
+      ]
+    },
+    {
+      "kennung": "stochastik.zufallsgroesse.erwartungswert",
+      "name": "Erwartungswert",
+      "eltern": "stochastik.zufallsgroesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "durchschnittlicher Gewinn",
+        "auf lange Sicht",
+        "im Mittel"
+      ]
+    },
+    {
+      "kennung": "stochastik.zufallsgroesse.varianz_sigma",
+      "name": "Varianz & Standardabweichung",
+      "eltern": "stochastik.zufallsgroesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Streuung",
+        "Standardabweichung"
+      ]
+    },
+    {
+      "kennung": "stochastik.zufallsgroesse.faires_spiel",
+      "name": "Faires Spiel",
+      "eltern": "stochastik.zufallsgroesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Einsatz",
+        "Gewinn",
+        "fair"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial",
+      "name": "Binomialverteilung",
+      "eltern": "stochastik",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.binomial.voraussetzungen",
+      "name": "Voraussetzungen der Binomialverteilung",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Bernoulli-Kette",
+        "Modellannahmen",
+        "begründen Sie die Binomialverteilung"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial.einzelwkt",
+      "name": "Einzelwahrscheinlichkeiten",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "genau k Treffer"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial.kumuliert",
+      "name": "Kumulierte Wahrscheinlichkeiten",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "höchstens",
+        "mindestens",
+        "zwischen",
+        "mehr als",
+        "weniger als"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial.kenngroessen",
+      "name": "Kenngrößen der Binomialverteilung",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Erwartungswert n mal p",
+        "Standardabweichung"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial.mindestens_n",
+      "name": "Mindestanzahl von Versuchen",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "wie oft muss man mindestens",
+        "Dreimal-mindestens-Aufgabe"
+      ]
+    },
+    {
+      "kennung": "stochastik.binomial.parameter_bestimmen",
+      "name": "Parameter bestimmen",
+      "eltern": "stochastik.binomial",
+      "kursniveau": "alle",
+      "synonyme": [
+        "für welches p",
+        "maximales n"
+      ]
+    },
+    {
+      "kennung": "stochastik.sigma",
+      "name": "Sigma-Regeln",
+      "eltern": "stochastik",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Sigma-Umgebung"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.sigma.sigma_regeln",
+      "name": "Sigma-Regeln",
+      "eltern": "stochastik.sigma",
+      "kursniveau": "LK",
+      "synonyme": [],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.sigma.prognoseintervall",
+      "name": "Prognoseintervall",
+      "eltern": "stochastik.sigma",
+      "kursniveau": "LK",
+      "synonyme": [
+        "mit 95 % Wahrscheinlichkeit zwischen"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.normalverteilung",
+      "name": "Normalverteilung",
+      "eltern": "stochastik",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Gauß-Verteilung",
+        "stetige Zufallsgröße"
+      ]
+    },
+    {
+      "kennung": "stochastik.normalverteilung.dichtefunktion",
+      "name": "Dichtefunktion",
+      "eltern": "stochastik.normalverteilung",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Glockenkurve",
+        "Gaußsche Glockenkurve",
+        "Wendestellen"
+      ]
+    },
+    {
+      "kennung": "stochastik.normalverteilung.wkt_berechnen",
+      "name": "Wahrscheinlichkeiten bei Normalverteilung",
+      "eltern": "stochastik.normalverteilung",
+      "kursniveau": "LK",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.normalverteilung.approximation",
+      "name": "Approximation der Binomialverteilung",
+      "eltern": "stochastik.normalverteilung",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Näherung durch Normalverteilung"
+      ]
+    },
+    {
+      "kennung": "stochastik.testen",
+      "name": "Hypothesentests",
+      "eltern": "stochastik",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Hypothesentest",
+        "Signifikanztest"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.testen.einseitig",
+      "name": "Einseitiger Test",
+      "eltern": "stochastik.testen",
+      "kursniveau": "LK",
+      "synonyme": [
+        "linksseitig",
+        "rechtsseitig"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.testen.zweiseitig",
+      "name": "Zweiseitiger Test",
+      "eltern": "stochastik.testen",
+      "kursniveau": "LK",
+      "synonyme": [],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.testen.entscheidungsregel",
+      "name": "Entscheidungsregel",
+      "eltern": "stochastik.testen",
+      "kursniveau": "LK",
+      "synonyme": [
+        "Ablehnungsbereich",
+        "Signifikanzniveau",
+        "Nullhypothese"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.testen.fehlerarten",
+      "name": "Fehler 1. und 2. Art",
+      "eltern": "stochastik.testen",
+      "kursniveau": "LK",
+      "synonyme": [
+        "irrtümlich abgelehnt",
+        "irrtümlich beibehalten"
+      ],
+      "zu_pruefen": "Kursniveau gegen Kernlehrplan prüfen"
+    },
+    {
+      "kennung": "stochastik.prozesse",
+      "name": "Stochastische Prozesse",
+      "eltern": "stochastik",
+      "kursniveau": "alle",
+      "synonyme": []
+    },
+    {
+      "kennung": "stochastik.prozesse.uebergangsmatrix",
+      "name": "Übergangsmatrizen",
+      "eltern": "stochastik.prozesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Übergangsgraph",
+        "Populationsentwicklung",
+        "Kundenwanderung",
+        "Matrix"
+      ]
+    },
+    {
+      "kennung": "stochastik.prozesse.zukunft_vergangenheit",
+      "name": "Zustände vorher & nachher",
+      "eltern": "stochastik.prozesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "nach n Schritten",
+        "Vorgängerzustand",
+        "inverse Matrix"
+      ]
+    },
+    {
+      "kennung": "stochastik.prozesse.stabile_verteilung",
+      "name": "Stabile Verteilung",
+      "eltern": "stochastik.prozesse",
+      "kursniveau": "alle",
+      "synonyme": [
+        "Grenzverteilung",
+        "Fixvektor",
+        "langfristige Entwicklung"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# Python / uv
+__pycache__/
+*.pyc
+.venv/
+.python-version
+
+# Django
+app/staticfiles/
+app/static/css/tailwind.css
+*.log
+db.sqlite3
+
+# Tailwind-Standalone-CLI (wird von scripts/tailwindcss.sh heruntergeladen)
+.bin/
+
+# Umgebungsvariablen / Geheimnisse
+.env
+
+# Klausur-PDFs und Import-Pakete (urheberrechtlich geschützt)
+zerlegung/eingang/
+zerlegung/pakete/
+media/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

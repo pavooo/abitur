@@ -1,0 +1,7 @@
+from django.apps import AppConfig
+
+
+class AdminbereichConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "adminbereich"
+    verbose_name = "Adminbereich"

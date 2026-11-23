@@ -1,0 +1,34 @@
+[project]
+name = "abitur-archiv"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "django>=5.0,<5.1",
+    "psycopg[binary]>=3.1",
+    "django-environ>=0.11",
+    "django-axes>=6.5",
+    "django-htmx>=1.17",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["**/migrations/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "DJ"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+python_files = ["tests.py", "test_*.py"]
+pythonpath = ["app"]

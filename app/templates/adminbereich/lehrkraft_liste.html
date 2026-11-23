@@ -1,0 +1,35 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Lehrkräfte{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Lehrkräfte</h1>
+<table class="w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">E-Mail</th>
+      <th class="px-4 py-2">Status</th>
+      <th class="px-4 py-2">Admin</th>
+      <th class="px-4 py-2">Fächer</th>
+      <th class="px-4 py-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lehrkraft in lehrkraefte %}
+      <tr class="border-t border-slate-100">
+        <td class="px-4 py-2">{{ lehrkraft.email }}</td>
+        <td class="px-4 py-2">{{ lehrkraft.get_status_display }}</td>
+        <td class="px-4 py-2">{% if lehrkraft.ist_admin %}Ja{% else %}Nein{% endif %}</td>
+        <td class="px-4 py-2">
+          {% for fach in lehrkraft.faecher.all %}{{ fach.kuerzel }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        </td>
+        <td class="px-4 py-2">
+          <a class="underline" href="{% url 'adminbereich:lehrkraft_detail' lehrkraft.pk %}">Verwalten</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="5">Keine Lehrkräfte vorhanden.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Fächer{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Fächer</h1>
+
+<ul class="mb-8 space-y-1 text-sm">
+  {% for fach in faecher %}
+    <li class="rounded-md border border-slate-200 bg-white px-4 py-2">{{ fach.name }} ({{ fach.kuerzel }})</li>
+  {% empty %}
+    <li class="text-slate-500">Noch keine Fächer angelegt.</li>
+  {% endfor %}
+</ul>
+
+<h2 class="mb-4 text-lg font-semibold">Fach anlegen</h2>
+<form method="post" class="max-w-sm space-y-4">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+    Anlegen
+  </button>
+</form>
+{% endblock %}
