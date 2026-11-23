@@ -21,7 +21,8 @@ def admin_client(client, db):
 
 @pytest.fixture
 def fach(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 @pytest.mark.django_db
@@ -86,13 +87,15 @@ class TestLehrkraftVerwaltung:
 @pytest.mark.django_db
 class TestFachAnlegen:
     def test_fach_anlegen(self, admin_client):
+        # Bewusst kein Standardfach aus Migration 0007 (die bereits existieren
+        # und hier eine Validierungsfehler statt eines Redirects auslösen würden).
         response = admin_client.post(
             reverse("adminbereich:fach_liste"),
-            {"name": "Mathematik", "kuerzel": "M"},
+            {"name": "Niederländisch", "kuerzel": "NL"},
         )
 
         assert response.status_code == 302
-        assert Fach.objects.filter(kuerzel="M").exists()
+        assert Fach.objects.filter(kuerzel="NL").exists()
 
 
 @pytest.mark.django_db

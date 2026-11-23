@@ -9,9 +9,11 @@ from .conftest import dummy_pdf, erstelle_aufgabe, erstelle_teilaufgabe
 
 @pytest.mark.django_db
 def test_fach_kuerzel_ist_eindeutig():
-    Fach.objects.create(name="Mathematik", kuerzel="M")
+    # Bewusst kein Kürzel aus den Standardfächern (Migration 0007), damit der
+    # Test unabhängig von bereits vorhandenen Seed-Daten funktioniert.
+    Fach.objects.create(name="Test-Fach-Eins", kuerzel="ZZ")
     with pytest.raises(IntegrityError):
-        Fach.objects.create(name="Musik", kuerzel="M")
+        Fach.objects.create(name="Test-Fach-Zwei", kuerzel="ZZ")
 
 
 @pytest.mark.django_db

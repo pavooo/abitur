@@ -133,7 +133,8 @@ def taxonomie_json(
 
 @pytest.fixture
 def fach_mathe(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 @pytest.fixture

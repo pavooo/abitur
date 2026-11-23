@@ -19,7 +19,8 @@ def admin_lehrkraft(db):
 
 @pytest.fixture
 def fach_mathe(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 def _zip_upload(tmp_path, **kwargs):

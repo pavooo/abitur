@@ -17,12 +17,16 @@ def dummy_pdf(name="klausur.pdf"):
 
 @pytest.fixture
 def fach_mathe(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    # get_or_create statt create: "Mathematik"/"M" ist eines der durch
+    # Migration 0007 automatisch angelegten Standardfächer.
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 @pytest.fixture
 def fach_deutsch(db):
-    return Fach.objects.create(name="Deutsch", kuerzel="D")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="D", defaults={"name": "Deutsch"})
+    return fach
 
 
 @pytest.fixture

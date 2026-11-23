@@ -11,7 +11,8 @@ from accounts.models import Lehrkraft, Zugangscode
 
 @pytest.fixture
 def fach(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 @pytest.fixture
@@ -260,3 +261,30 @@ class TestSusSessionMiddleware:
         response = client.get(reverse("accounts:sus_startseite"))
         assert response.status_code == 302
         assert response.url == reverse("accounts:login_waehlen")
+
+
+@pytest.mark.django_db
+class TestLogout:
+    def test_logout_per_post_meldet_ab(self, client):
+        lehrkraft = Lehrkraft.objects.create_user(
+            email="aktiv@schule.de", password="s3hrGeheim!", status=Lehrkraft.Status.AKTIV
+        )
+        client.force_login(lehrkraft)
+
+        response = client.post(reverse("accounts:logout"))
+
+        assert response.status_code == 302
+        assert not response.wsgi_request.user.is_authenticated
+
+    def test_logout_per_get_ist_nicht_erlaubt(self, client):
+        # LogoutView akzeptiert seit Django 4.1 nur noch POST (CSRF-Schutz) –
+        # das base.html-Template muss daher ein Formular statt eines <a href>
+        # verwenden, sonst gibt es hier einen 405 (siehe Vorfall).
+        lehrkraft = Lehrkraft.objects.create_user(
+            email="aktiv@schule.de", password="s3hrGeheim!", status=Lehrkraft.Status.AKTIV
+        )
+        client.force_login(lehrkraft)
+
+        response = client.get(reverse("accounts:logout"))
+
+        assert response.status_code == 405

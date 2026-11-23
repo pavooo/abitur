@@ -107,7 +107,7 @@ class TestVorschau:
         assert vorschau.taxonomie_themen_anzahl == 1
 
     def test_fach_der_klausur_weicht_vom_manifest_ab(self, tmp_path, fach_mathe):
-        Fach.objects.create(name="Deutsch", kuerzel="D")
+        Fach.objects.get_or_create(kuerzel="D", defaults={"name": "Deutsch"})
         zip_pfad = schreibe_paket_zip(
             tmp_path / "paket.zip",
             manifest=manifest_fuer("M"),

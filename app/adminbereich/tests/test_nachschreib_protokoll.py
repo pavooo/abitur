@@ -20,7 +20,7 @@ def admin_client(client, db):
 @pytest.mark.django_db
 class TestNachschreibProtokollListe:
     def test_listet_protokollierte_zugriffe(self, admin_client):
-        fach = Fach.objects.create(name="Mathematik", kuerzel="M")
+        fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
         klausur = Klausur.objects.create(
             fach=fach,
             jahr=2024,

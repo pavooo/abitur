@@ -43,10 +43,16 @@
           {% if request.user.ist_admin %}
             <a href="{% url 'adminbereich:dashboard' %}" class="hover:underline">Adminbereich</a>
           {% endif %}
-          <a href="{% url 'accounts:logout' %}" class="hover:underline">Abmelden</a>
+          <form method="post" action="{% url 'accounts:logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="hover:underline">Abmelden</button>
+          </form>
         {% elif request.sus_zugangscode %}
           <span>{{ request.sus_zugangscode.fach.name }}</span>
-          <a href="{% url 'accounts:logout' %}" class="hover:underline">Abmelden</a>
+          <form method="post" action="{% url 'accounts:logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="hover:underline">Abmelden</button>
+          </form>
         {% endif %}
       </nav>
     </div>

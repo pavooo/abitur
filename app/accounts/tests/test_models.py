@@ -9,7 +9,8 @@ from accounts.models import Lehrkraft, Zugangscode
 
 @pytest.fixture
 def fach(db):
-    return Fach.objects.create(name="Mathematik", kuerzel="M")
+    fach, _erstellt = Fach.objects.get_or_create(kuerzel="M", defaults={"name": "Mathematik"})
+    return fach
 
 
 @pytest.mark.django_db
