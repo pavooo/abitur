@@ -20,8 +20,12 @@
       </select>
     {% endif %}
 
-    <input type="number" name="jahr" value="{{ g.jahr }}" placeholder="Jahr"
-           class="w-24 rounded border border-slate-300 px-3 py-2 text-sm">
+    <select name="jahr" class="rounded border border-slate-300 px-3 py-2 text-sm">
+      <option value="">Alle Jahre</option>
+      {% for jahr in jahre %}
+        <option value="{{ jahr }}" {% if g.jahr == jahr|stringformat:"s" %}selected{% endif %}>{{ jahr }}</option>
+      {% endfor %}
+    </select>
 
     <select name="kursart" class="rounded border border-slate-300 px-3 py-2 text-sm">
       <option value="">GK/LK</option>
@@ -37,37 +41,58 @@
       {% endfor %}
     </select>
 
-    <select name="hilfsmittel" class="rounded border border-slate-300 px-3 py-2 text-sm">
-      <option value="">Hilfsmittel</option>
-      {% for wert, label in hilfsmittel_choices %}
-        <option value="{{ wert }}" {% if g.hilfsmittel == wert %}selected{% endif %}>{{ label }}</option>
-      {% endfor %}
-    </select>
-
-    {% if not ist_lehrkraft %}
-      <label class="flex items-center gap-2 rounded border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900">
-        <input type="checkbox" name="nur_hilfsmittelfrei" value="1" {% if g.nur_hilfsmittelfrei == "1" %}checked{% endif %}>
-        Nur hilfsmittelfrei
-      </label>
-    {% else %}
-      <select name="pruefungsteil" class="rounded border border-slate-300 px-3 py-2 text-sm">
-        <option value="">Prüfungsteil</option>
-        {% for wert, label in pruefungsteil_choices %}
-          <option value="{{ wert }}" {% if g.pruefungsteil == wert %}selected{% endif %}>{{ label }}</option>
+    <span id="hilfsmittel-feld">
+      <select name="hilfsmittel" class="rounded border border-slate-300 px-3 py-2 text-sm">
+        <option value="">Alle Hilfsmittel</option>
+        {% for wert, label in hilfsmittel_choices %}
+          <option value="{{ wert }}" {% if hilfsmittel_wert == wert %}selected{% endif %}>{{ label }}</option>
         {% endfor %}
       </select>
-      {% if nachschreibmodus_aktiv %}
-        <select name="termin" class="rounded border border-slate-300 px-3 py-2 text-sm">
-          <option value="">Termin</option>
-          {% for wert, label in termine %}
-            <option value="{{ wert }}" {% if g.termin == wert %}selected{% endif %}>{{ label }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
+    </span>
+
+    <label class="flex items-center gap-2 rounded border px-3 py-2 text-sm {% if not ist_lehrkraft %}border-amber-300 bg-amber-50 font-semibold text-amber-900{% else %}border-slate-300{% endif %}">
+      <input type="checkbox" id="nur_hilfsmittelfrei" name="nur_hilfsmittelfrei" value="1" {% if g.nur_hilfsmittelfrei == "1" %}checked{% endif %}>
+      Nur hilfsmittelfrei
+    </label>
+
+    <label class="flex items-center gap-2 rounded border border-slate-300 px-3 py-2 text-sm">
+      <input type="checkbox" id="nur_mit_hilfsmitteln" name="nur_mit_hilfsmitteln" value="1" {% if g.nur_mit_hilfsmitteln == "1" %}checked{% endif %}>
+      Nur mit Hilfsmitteln
+    </label>
+
+    {% if ist_lehrkraft and nachschreibmodus_aktiv %}
+      <select name="termin" class="rounded border border-slate-300 px-3 py-2 text-sm">
+        <option value="">Termin</option>
+        {% for wert, label in termine %}
+          <option value="{{ wert }}" {% if g.termin == wert %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
     {% endif %}
   </div>
   <button type="submit" class="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700">Suchen</button>
 </form>
+
+<script>
+  (function () {
+    var hilfsmittelfrei = document.getElementById("nur_hilfsmittelfrei");
+    var mitHilfsmitteln = document.getElementById("nur_mit_hilfsmitteln");
+    var hilfsmittelFeld = document.getElementById("hilfsmittel-feld");
+
+    function aktualisieren() {
+      hilfsmittelFeld.hidden = hilfsmittelfrei.checked;
+    }
+
+    hilfsmittelfrei.addEventListener("change", function () {
+      if (hilfsmittelfrei.checked) mitHilfsmitteln.checked = false;
+      aktualisieren();
+    });
+    mitHilfsmitteln.addEventListener("change", function () {
+      if (mitHilfsmitteln.checked) hilfsmittelfrei.checked = false;
+      aktualisieren();
+    });
+    aktualisieren();
+  })();
+</script>
 
 <div id="treffer">
   {% include "archiv/_treffer_liste.html" %}

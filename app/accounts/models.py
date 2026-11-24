@@ -119,6 +119,17 @@ class Zugangscode(models.Model):
         zugangscode.save()
         return zugangscode, klartext_code
 
+    def code_neu_generieren(self):
+        """Erzeugt einen neuen Klartext-Code und ersetzt den gespeicherten Hash.
+        Der alte Code wird dadurch sofort ungültig. Da nur der Hash gespeichert
+        wird, ist das der einzige Weg, einem bestehenden Zugangscode nachträglich
+        wieder einen bekannten Klartext zuzuordnen (siehe CLAUDE.md: Codes werden
+        nur einmalig im Klartext angezeigt)."""
+        klartext_code = _generiere_klartext_code()
+        self.code_setzen(klartext_code)
+        self.save(update_fields=["code_hash"])
+        return klartext_code
+
     @classmethod
     def finde_gueltigen_code(cls, klartext_code):
         heute = timezone.localdate()

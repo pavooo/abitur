@@ -69,14 +69,22 @@ def suche(request):
         queryset = queryset.in_thema(g["thema"])
     if g.get("anforderungsbereich"):
         queryset = queryset.filter(anforderungsbereich=g["anforderungsbereich"])
-    if g.get("hilfsmittel"):
-        queryset = queryset.filter(aufgabe__klausur__hilfsmittel=g["hilfsmittel"])
 
     nur_hilfsmittelfrei = g.get("nur_hilfsmittelfrei") == "1"
+    nur_mit_hilfsmitteln = g.get("nur_mit_hilfsmitteln") == "1"
     if nur_hilfsmittelfrei:
         queryset = queryset.filter(aufgabe__pruefungsteil=Aufgabe.Pruefungsteil.HILFSMITTELFREI)
-    elif g.get("pruefungsteil"):
-        queryset = queryset.filter(aufgabe__pruefungsteil=g["pruefungsteil"])
+    elif nur_mit_hilfsmitteln:
+        queryset = queryset.filter(aufgabe__pruefungsteil=Aufgabe.Pruefungsteil.MIT_HILFSMITTELN)
+
+    # Hilfsmittel (CAS/TR) ist nur für Aufgaben mit Hilfsmitteln aussagekräftig –
+    # bei "nur hilfsmittelfrei" wird der Filter ignoriert (sonst verschwänden
+    # hilfsmittelfreie Treffer der TR-Variante, nur weil "CAS" gewählt ist,
+    # obwohl Prüfungsteil A zwischen CAS/TR-Varianten identisch ist). Ohne
+    # explizite Wahl ist "CAS" voreingestellt (Standardwert laut Anforderung).
+    hilfsmittel_wert = g["hilfsmittel"] if "hilfsmittel" in g else Klausur.Hilfsmittel.CAS
+    if hilfsmittel_wert and not nur_hilfsmittelfrei:
+        queryset = queryset.filter(aufgabe__klausur__hilfsmittel=hilfsmittel_wert)
 
     # Termin-Filter nur für Lehrkräfte im aktivierten Nachschreibmodus (CLAUDE.md,
     # Abschnitt Suche) – sichtbar_fuer() würde SuS ohnehin nie Nachschreibtermine
@@ -88,16 +96,24 @@ def suche(request):
     paginator = Paginator(gruppen, TREFFER_PRO_SEITE)
     seite_obj = paginator.get_page(g.get("seite", 1))
 
+    jahre = (
+        Klausur.objects.sichtbar_fuer(request)
+        .order_by("-jahr")
+        .values_list("jahr", flat=True)
+        .distinct()
+    )
+
     kontext_daten = {
         "seite_obj": seite_obj,
         "g": g,
+        "hilfsmittel_wert": hilfsmittel_wert,
         "ist_lehrkraft": ist_lehrkraft,
         "nachschreibmodus_aktiv": nachschreibmodus_aktiv,
         "faecher": Fach.objects.filter(id__in=kontext.fach_ids) if ist_lehrkraft else None,
+        "jahre": jahre,
         "kursarten": Klausur.Kursart.choices,
         "anforderungsbereiche": Teilaufgabe.Anforderungsbereich.choices,
         "hilfsmittel_choices": Klausur.Hilfsmittel.choices,
-        "pruefungsteil_choices": Aufgabe.Pruefungsteil.choices,
         "termine": Termin.choices,
     }
     template = "archiv/_treffer_liste.html" if request.htmx else "archiv/suche.html"

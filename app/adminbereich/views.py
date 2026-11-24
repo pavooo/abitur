@@ -2,6 +2,7 @@ from accounts.models import Lehrkraft, Zugangscode
 from archiv.models import Fach, NachschreibZugriff
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.html import format_html
 from django.views.decorators.http import require_POST
 from importer.models import Importprotokoll
 from importer.paket import PaketFehler, entpacken
@@ -19,6 +20,18 @@ from .forms import (
 
 STAGING_TOKEN_SESSION_KEY = "import_staging_token"
 STAGING_PAKETNAME_SESSION_KEY = "import_staging_paketname"
+
+
+def _klartext_code_nachricht(bezeichnung, klartext_code, *, hinweis_zusatz=""):
+    return format_html(
+        'Zugangscode für „{}“: <code class="rounded bg-slate-100 px-2 py-1 font-mono">{}</code> '
+        '<button type="button" data-copy="{}" class="ml-2 underline">Kopieren</button> '
+        "(wird nur jetzt angezeigt – bitte sofort notieren{}).",
+        bezeichnung,
+        klartext_code,
+        klartext_code,
+        hinweis_zusatz,
+    )
 
 
 @admin_erforderlich
@@ -97,9 +110,7 @@ def zugangscode_liste(request):
                 ablaufdatum=form.cleaned_data["ablaufdatum"],
             )
             messages.success(
-                request,
-                f"Zugangscode erstellt: {klartext_code} "
-                "(wird nur jetzt angezeigt – bitte sofort notieren).",
+                request, _klartext_code_nachricht(zugangscode.bezeichnung, klartext_code)
             )
             return redirect("adminbereich:zugangscode_liste")
     else:
@@ -123,6 +134,22 @@ def zugangscode_sperren_umschalten(request, pk):
         messages.success(request, f"Zugangscode „{zugangscode.bezeichnung}“ wurde gesperrt.")
     else:
         messages.success(request, f"Zugangscode „{zugangscode.bezeichnung}“ wurde entsperrt.")
+    return redirect("adminbereich:zugangscode_liste")
+
+
+@admin_erforderlich
+@require_POST
+def zugangscode_neu_generieren(request, pk):
+    zugangscode = get_object_or_404(Zugangscode, pk=pk)
+    klartext_code = zugangscode.code_neu_generieren()
+    messages.success(
+        request,
+        _klartext_code_nachricht(
+            zugangscode.bezeichnung,
+            klartext_code,
+            hinweis_zusatz="; der alte Code ist ab sofort ungültig",
+        ),
+    )
     return redirect("adminbereich:zugangscode_liste")
 
 

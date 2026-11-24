@@ -113,7 +113,9 @@ class TestZugangscodeVerwaltung:
 
         assert Zugangscode.objects.filter(bezeichnung="Mathe-LK Abi 2027").exists()
         messages = [str(message) for message in response.context["messages"]]
-        assert any("Zugangscode erstellt" in message for message in messages)
+        assert any(
+            "Zugangscode für" in message and "Mathe-LK Abi 2027" in message for message in messages
+        )
 
     def test_sperren_umschalten(self, admin_client, fach):
         zugangscode, _klartext = Zugangscode.erstellen(
@@ -133,3 +135,47 @@ class TestZugangscodeVerwaltung:
         )
         zugangscode.refresh_from_db()
         assert zugangscode.gesperrt is False
+
+    def test_neu_generieren_macht_alten_code_ungueltig_und_zeigt_neuen(self, admin_client, fach):
+        zugangscode, alter_klartext = Zugangscode.erstellen(
+            fach=fach,
+            bezeichnung="Mathe-LK Abi 2027",
+            ablaufdatum=timezone.localdate() + datetime.timedelta(days=30),
+        )
+        alter_hash = zugangscode.code_hash
+
+        response = admin_client.post(
+            reverse("adminbereich:zugangscode_neu_generieren", args=[zugangscode.pk]), follow=True
+        )
+
+        zugangscode.refresh_from_db()
+        assert zugangscode.code_hash != alter_hash
+        assert not zugangscode.code_pruefen(alter_klartext)
+        messages = [str(message) for message in response.context["messages"]]
+        assert any("Zugangscode für" in message and "ungültig" in message for message in messages)
+
+    def test_neu_generieren_erfordert_post(self, admin_client, fach):
+        zugangscode, _klartext = Zugangscode.erstellen(
+            fach=fach,
+            bezeichnung="Mathe-LK Abi 2027",
+            ablaufdatum=timezone.localdate() + datetime.timedelta(days=30),
+        )
+        response = admin_client.get(
+            reverse("adminbereich:zugangscode_neu_generieren", args=[zugangscode.pk])
+        )
+        assert response.status_code == 405
+
+    def test_neu_generieren_erfordert_admin_recht(self, client, fach):
+        lehrkraft = Lehrkraft.objects.create_user(
+            email="normal@schule.de", password="s3hrGeheim!", status=Lehrkraft.Status.AKTIV
+        )
+        zugangscode, _klartext = Zugangscode.erstellen(
+            fach=fach,
+            bezeichnung="Mathe-LK Abi 2027",
+            ablaufdatum=timezone.localdate() + datetime.timedelta(days=30),
+        )
+        client.force_login(lehrkraft)
+        response = client.post(
+            reverse("adminbereich:zugangscode_neu_generieren", args=[zugangscode.pk])
+        )
+        assert response.status_code == 403

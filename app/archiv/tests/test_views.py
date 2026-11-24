@@ -10,10 +10,10 @@ Klausuransicht, PDF-/Erwartungshorizont-Auslieferung oder Vorschaubilder.
 import pytest
 from django.urls import reverse
 
-from archiv.models import NachschreibZugriff, Thema
+from archiv.models import Klausur, NachschreibZugriff, Thema
 from archiv.sichtbarkeit import NACHSCHREIBMODUS_SESSION_KEY
 
-from .conftest import erstelle_aufgabe, erstelle_teilaufgabe
+from .conftest import dummy_pdf, erstelle_aufgabe, erstelle_teilaufgabe
 
 
 @pytest.fixture
@@ -43,7 +43,9 @@ class TestSucheNachschreibPflicht:
         erstelle_teilaufgabe(erstelle_aufgabe(klausur_haupttermin))
         erstelle_teilaufgabe(erstelle_aufgabe(klausur_nachschreibtermin))
 
-        response = sus_client.get(reverse("archiv:suche"))
+        # hilfsmittel="" deaktiviert den Standardfilter (sonst Default "CAS"),
+        # die Fixtures legen Klausuren mit Hilfsmittel "TR" an.
+        response = sus_client.get(reverse("archiv:suche"), {"hilfsmittel": ""})
 
         klausuren = _klausuren_aus_seite(response)
         assert klausur_nachschreibtermin not in klausuren
@@ -53,7 +55,9 @@ class TestSucheNachschreibPflicht:
         self, sus_client, klausur_nachschreibtermin
     ):
         erstelle_teilaufgabe(erstelle_aufgabe(klausur_nachschreibtermin))
-        response = sus_client.get(reverse("archiv:suche"), {"termin": "nachschreibtermin"})
+        response = sus_client.get(
+            reverse("archiv:suche"), {"termin": "nachschreibtermin", "hilfsmittel": ""}
+        )
         assert klausur_nachschreibtermin not in _klausuren_aus_seite(response)
 
     def test_lehrkraft_sieht_nachschreibklausur_nur_im_nachschreibmodus(
@@ -62,11 +66,11 @@ class TestSucheNachschreibPflicht:
         erstelle_teilaufgabe(erstelle_aufgabe(klausur_nachschreibtermin))
 
         normalmodus = lehrkraft_client_factory(faecher=[fach_mathe])
-        response = normalmodus.get(reverse("archiv:suche"))
+        response = normalmodus.get(reverse("archiv:suche"), {"hilfsmittel": ""})
         assert klausur_nachschreibtermin not in _klausuren_aus_seite(response)
 
         nachschreibmodus = lehrkraft_client_factory(faecher=[fach_mathe], nachschreibmodus=True)
-        response = nachschreibmodus.get(reverse("archiv:suche"))
+        response = nachschreibmodus.get(reverse("archiv:suche"), {"hilfsmittel": ""})
         assert klausur_nachschreibtermin in _klausuren_aus_seite(response)
 
     def test_nur_hilfsmittelfrei_filter(
@@ -88,6 +92,78 @@ class TestSucheNachschreibPflicht:
         gruppen = response.context["seite_obj"].object_list
         teilaufgaben = [t for eintrag in gruppen for t in eintrag["teilaufgaben"]]
         assert teilaufgaben == [teilaufgabe_frei]
+
+
+@pytest.mark.django_db
+class TestHilfsmittelUndJahrFilter:
+    def test_ohne_parameter_ist_cas_voreingestellt(self, lehrkraft_client_factory, fach_mathe):
+        klausur_cas = Klausur.objects.create(
+            fach=fach_mathe,
+            jahr=2024,
+            kursart=Klausur.Kursart.LK,
+            termin=Klausur.Termin.HAUPTTERMIN,
+            titel="CAS-Klausur",
+            hilfsmittel=Klausur.Hilfsmittel.CAS,
+            pdf=dummy_pdf("cas.pdf"),
+        )
+        klausur_tr = Klausur.objects.create(
+            fach=fach_mathe,
+            jahr=2024,
+            kursart=Klausur.Kursart.LK,
+            termin=Klausur.Termin.HAUPTTERMIN,
+            variante="TR",
+            titel="TR-Klausur",
+            hilfsmittel=Klausur.Hilfsmittel.TR,
+            pdf=dummy_pdf("tr.pdf"),
+        )
+        erstelle_teilaufgabe(erstelle_aufgabe(klausur_cas))
+        erstelle_teilaufgabe(erstelle_aufgabe(klausur_tr))
+
+        lehrkraft_client = lehrkraft_client_factory(faecher=[fach_mathe])
+        response = lehrkraft_client.get(reverse("archiv:suche"))
+
+        klausuren = _klausuren_aus_seite(response)
+        assert klausur_cas in klausuren
+        assert klausur_tr not in klausuren
+
+    def test_nur_hilfsmittelfrei_ignoriert_hilfsmittel_default(
+        self, lehrkraft_client_factory, fach_mathe, klausur_haupttermin
+    ):
+        from archiv.models import Aufgabe
+
+        # Fixture nutzt hilfsmittel="TR"; ohne Sonderbehandlung würde der
+        # CAS-Default hilfsmittelfreie Treffer dieser Klausur verstecken.
+        hilfsmittelfrei = erstelle_aufgabe(klausur_haupttermin)
+        hilfsmittelfrei.pruefungsteil = Aufgabe.Pruefungsteil.HILFSMITTELFREI
+        hilfsmittelfrei.save()
+        teilaufgabe = erstelle_teilaufgabe(hilfsmittelfrei)
+
+        lehrkraft_client = lehrkraft_client_factory(faecher=[fach_mathe])
+        response = lehrkraft_client.get(reverse("archiv:suche"), {"nur_hilfsmittelfrei": "1"})
+
+        gruppen = response.context["seite_obj"].object_list
+        teilaufgaben = [t for eintrag in gruppen for t in eintrag["teilaufgaben"]]
+        assert teilaufgabe in teilaufgaben
+
+    def test_jahr_liste_enthaelt_nur_sichtbare_jahre_absteigend(
+        self, lehrkraft_client_factory, fach_mathe
+    ):
+        for jahr in (2022, 2024, 2023):
+            Klausur.objects.create(
+                fach=fach_mathe,
+                jahr=jahr,
+                kursart=Klausur.Kursart.LK,
+                termin=Klausur.Termin.HAUPTTERMIN,
+                variante=str(jahr),
+                titel=f"Klausur {jahr}",
+                hilfsmittel=Klausur.Hilfsmittel.CAS,
+                pdf=dummy_pdf(f"{jahr}.pdf"),
+            )
+
+        lehrkraft_client = lehrkraft_client_factory(faecher=[fach_mathe])
+        response = lehrkraft_client.get(reverse("archiv:suche"))
+
+        assert list(response.context["jahre"]) == [2024, 2023, 2022]
 
 
 @pytest.mark.django_db

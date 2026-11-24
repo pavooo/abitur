@@ -31,12 +31,19 @@
           {% endif %}
         </td>
         <td class="px-4 py-2">
-          <form method="post" action="{% url 'adminbereich:zugangscode_sperren_umschalten' zugangscode.pk %}">
-            {% csrf_token %}
-            <button type="submit" class="underline">
-              {% if zugangscode.gesperrt %}Entsperren{% else %}Sperren{% endif %}
-            </button>
-          </form>
+          <div class="flex items-center gap-3">
+            <form method="post" action="{% url 'adminbereich:zugangscode_sperren_umschalten' zugangscode.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="underline">
+                {% if zugangscode.gesperrt %}Entsperren{% else %}Sperren{% endif %}
+              </button>
+            </form>
+            <form method="post" action="{% url 'adminbereich:zugangscode_neu_generieren' zugangscode.pk %}"
+                  onsubmit="return confirm('Neuen Code für „{{ zugangscode.bezeichnung|escapejs }}“ erzeugen? Der alte Code wird dabei sofort ungültig.');">
+              {% csrf_token %}
+              <button type="submit" class="underline">Neu generieren</button>
+            </form>
+          </div>
         </td>
       </tr>
     {% empty %}

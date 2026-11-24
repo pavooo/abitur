@@ -15,6 +15,11 @@ urlpatterns = [
         views.zugangscode_sperren_umschalten,
         name="zugangscode_sperren_umschalten",
     ),
+    path(
+        "codes/<int:pk>/neu-generieren/",
+        views.zugangscode_neu_generieren,
+        name="zugangscode_neu_generieren",
+    ),
     path("import/", views.import_hochladen, name="import_hochladen"),
     path("import/bestaetigen/", views.import_bestaetigen, name="import_bestaetigen"),
     path("import/protokoll/", views.import_protokoll_liste, name="import_protokoll_liste"),
