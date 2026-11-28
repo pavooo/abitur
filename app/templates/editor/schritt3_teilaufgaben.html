@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Teilaufgaben{% endblock %}
+
+{% block content %}
+<h1 class="mb-6 text-xl font-semibold">{{ klausur.titel }}</h1>
+
+{% include "editor/_schritt_nav.html" with aktueller_schritt=3 klausur=klausur %}
+
+{% if aufgaben %}
+  <p class="mb-4 text-sm text-slate-600">
+    Links eine Teilaufgabe auswählen, dann rechts ein Rechteck auf der passenden Seite
+    ziehen – Text wird automatisch aus dem Bereich übernommen (bearbeitbar), Anforderungs-
+    bereich und Themen werden nur vorgeschlagen und müssen bestätigt werden.
+    <a href="{% url 'editor:option_c' klausur.pk %}" class="ml-2 underline">
+      Prompt für eigenes KI-Werkzeug erzeugen
+    </a>
+  </p>
+
+  <div
+    class="grid gap-6 sm:grid-cols-[360px_1fr]"
+    data-bereichsmarkierung
+    data-pdf-url="{% url 'archiv:klausur_datei' klausur.pk 'pdf' %}"
+    data-pdfjs-url="{% static 'pdfjs/pdf.min.mjs' %}"
+    data-pdfjs-worker-url="{% static 'pdfjs/pdf.worker.min.mjs' %}"
+    data-bereich-erstellen-url="{% url 'editor:bereich_erstellen' klausur.pk %}"
+    data-bereich-aktualisieren-url-vorlage="{% url 'editor:bereich_aktualisieren' klausur.pk 0 %}"
+    data-bereich-loeschen-url-vorlage="{% url 'editor:bereich_loeschen' klausur.pk 0 %}"
+    data-teilaufgaben-panel-url="{% url 'editor:teilaufgaben_panel_fragment' klausur.pk %}"
+  >
+    {% include "editor/_teilaufgaben_panel.html" %}
+    <div id="pdf-seiten"></div>
+  </div>
+  {{ bereiche_script }}
+
+  <div class="mt-8">
+    <a href="{% url 'editor:schritt4' klausur.pk %}" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+      Weiter
+    </a>
+  </div>
+
+  <script type="module" src="{% static 'js/bereichsmarkierung.js' %}"></script>
+  <script src="{% static 'js/vorschlag_chips.js' %}" defer></script>
+  <script src="{% static 'js/themensuche.js' %}" defer></script>
+{% else %}
+  <p class="text-slate-500">
+    Noch keine Aufgaben angelegt.
+    <a href="{% url 'editor:schritt2' klausur.pk %}" class="underline">Zurück zu Schritt 2</a>
+    oder direkt per
+    <a href="{% url 'editor:option_c' klausur.pk %}" class="underline">eigenem KI-Werkzeug</a> befüllen.
+  </p>
+{% endif %}
+{% endblock %}

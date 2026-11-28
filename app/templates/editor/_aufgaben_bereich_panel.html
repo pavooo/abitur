@@ -1,0 +1,37 @@
+<aside id="aufgaben-panel" class="space-y-4">
+  <h2 class="text-sm font-semibold text-slate-700">Aufgaben</h2>
+  <ul class="space-y-2">
+    {% for aufgabe in aufgaben %}
+      <li class="rounded-md border border-slate-200 p-2 text-sm">
+        <label class="flex items-start gap-2">
+          <input type="radio" name="aktives-ziel" value="aufgabe:{{ aufgabe.pk }}" class="mt-1">
+          <span>
+            <strong>Aufgabe {{ aufgabe.nummer }}</strong>{% if aufgabe.kontext %} – {{ aufgabe.kontext }}{% endif %}<br>
+            <span class="text-xs text-slate-500">
+              {% if aufgabe.seite_von %}
+                Seite {{ aufgabe.seite_von }}{% if aufgabe.seite_bis != aufgabe.seite_von %}–{{ aufgabe.seite_bis }}{% endif %} ·
+              {% endif %}
+              {{ aufgabe.bereiche.count }} Bereich{{ aufgabe.bereiche.count|pluralize:",e" }}
+            </span>
+          </span>
+        </label>
+        <form method="post" action="{% url 'editor:aufgabe_loeschen' klausur.pk aufgabe.pk %}"
+              hx-post="{% url 'editor:aufgabe_loeschen' klausur.pk aufgabe.pk %}" hx-target="#aufgaben-panel" hx-swap="outerHTML" class="mt-1">
+          {% csrf_token %}
+          <button type="submit" class="text-xs text-red-600 underline">Aufgabe löschen</button>
+        </form>
+      </li>
+    {% empty %}
+      <li class="text-sm text-slate-500">Noch keine Aufgaben angelegt.</li>
+    {% endfor %}
+  </ul>
+
+  <form method="post" action="{% url 'editor:aufgabe_erstellen' klausur.pk %}"
+        hx-post="{% url 'editor:aufgabe_erstellen' klausur.pk %}" hx-target="#aufgaben-panel" hx-swap="outerHTML" class="space-y-2">
+    {% csrf_token %}
+    {% include "includes/form_fields.html" with form=aufgabe_form %}
+    <button type="submit" class="w-full rounded-md bg-slate-800 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700">
+      Aufgabe hinzufügen
+    </button>
+  </form>
+</aside>

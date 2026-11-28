@@ -27,3 +27,9 @@ class ZugangscodeErstellenForm(TailwindFormMixin, forms.Form):
 
 class ImportUploadForm(TailwindFormMixin, forms.Form):
     paket = forms.FileField(label="Import-Paket (ZIP)")
+
+
+class AblehnenForm(TailwindFormMixin, forms.Form):
+    kommentar = forms.CharField(
+        label="Ablehnungskommentar", widget=forms.Textarea(attrs={"rows": 4})
+    )

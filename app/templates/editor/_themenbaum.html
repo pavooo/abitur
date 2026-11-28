@@ -1,0 +1,24 @@
+{% comment %}
+Rekursiv: rendert `themen` (Liste mit `.baum_kinder`) als Checkbox-Baum. Erwartet
+`teilaufgabe_pk`, `ausgewaehlte_ids` (Menge ausgewählter Themen-IDs) und `feld_name`
+(der `name` des Themen-Formularfelds, z. B. „themen“) im Kontext.
+{% endcomment %}
+<ul class="space-y-1 {% if ebene %}ml-4 border-l border-slate-200 pl-2{% endif %}">
+  {% for thema in themen %}
+    <li data-suchtext="{{ thema.suchtext }}">
+      <label class="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          name="{{ feld_name }}"
+          value="{{ thema.pk }}"
+          id="thema-check-{{ teilaufgabe_pk }}-{{ thema.pk }}"
+          {% if thema.pk in ausgewaehlte_ids %}checked{% endif %}
+        >
+        {{ thema.name }}
+      </label>
+      {% if thema.baum_kinder %}
+        {% include "editor/_themenbaum.html" with themen=thema.baum_kinder teilaufgabe_pk=teilaufgabe_pk ausgewaehlte_ids=ausgewaehlte_ids feld_name=feld_name ebene=1 %}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>

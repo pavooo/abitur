@@ -71,6 +71,23 @@ def klausur_anderes_fach(fach_deutsch):
     )
 
 
+def erstelle_klausur(fach, *, status=Klausur.Status.FREIGEGEBEN, ersteller=None, variante=""):
+    """Für Tests rund um den Freigabe-Status (siehe CLAUDE.md, Abschnitt Lehrkraft-Editor).
+    Variante muss je Test eindeutig sein, da Fach+Jahr+Kursart+Termin+Variante eindeutig ist."""
+    return Klausur.objects.create(
+        fach=fach,
+        jahr=2024,
+        kursart=Klausur.Kursart.LK,
+        termin=Klausur.Termin.HAUPTTERMIN,
+        variante=variante,
+        titel="Analysis",
+        hilfsmittel=Klausur.Hilfsmittel.TR,
+        pdf=dummy_pdf(f"status-{status}-{variante}.pdf"),
+        status=status,
+        ersteller=ersteller,
+    )
+
+
 def erstelle_aufgabe(klausur, nummer=1):
     return Aufgabe.objects.create(
         klausur=klausur,

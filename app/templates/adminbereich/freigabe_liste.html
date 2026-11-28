@@ -1,0 +1,42 @@
+{% extends "adminbereich/base.html" %}
+
+{% block title %}Zur Freigabe{% endblock %}
+
+{% block admin_content %}
+<h1 class="mb-6 text-xl font-semibold">Zur Freigabe</h1>
+<table class="w-full border-collapse overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr>
+      <th class="px-4 py-2">Titel</th>
+      <th class="px-4 py-2">Fach</th>
+      <th class="px-4 py-2">Jahr</th>
+      <th class="px-4 py-2">Termin</th>
+      <th class="px-4 py-2">Ersteller</th>
+      <th class="px-4 py-2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for klausur in klausuren %}
+      <tr class="border-t border-slate-100
+        {% if klausur.termin == 'nachschreibtermin' %}bg-red-50{% endif %}">
+        <td class="px-4 py-2">{{ klausur.titel }}</td>
+        <td class="px-4 py-2">{{ klausur.fach.name }}</td>
+        <td class="px-4 py-2">{{ klausur.jahr }}</td>
+        <td class="px-4 py-2">
+          {% if klausur.termin == "nachschreibtermin" %}
+            <span class="font-semibold text-red-700">{{ klausur.get_termin_display }}</span>
+          {% else %}
+            {{ klausur.get_termin_display }}
+          {% endif %}
+        </td>
+        <td class="px-4 py-2">{{ klausur.ersteller.email|default:"–" }}</td>
+        <td class="px-4 py-2 text-right">
+          <a href="{% url 'adminbereich:freigabe_detail' klausur.pk %}" class="text-slate-700 underline">Prüfen</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td class="px-4 py-2 text-slate-500" colspan="6">Keine Klausuren zur Freigabe.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

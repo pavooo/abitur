@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PDF &amp; Aufgaben{% endblock %}
+
+{% block content %}
+<h1 class="mb-6 text-xl font-semibold">{{ klausur.titel }}</h1>
+
+{% include "editor/_schritt_nav.html" with aktueller_schritt=2 klausur=klausur %}
+
+{% if klausur.pdf %}
+  <details class="mb-6 rounded-md border border-slate-200 bg-white p-4">
+    <summary class="cursor-pointer text-sm text-slate-600">
+      Aktuell: <strong>{{ klausur.pdf.name }}</strong>
+      {% if klausur.erwartungshorizont_pdf %}· Erwartungshorizont: <strong>{{ klausur.erwartungshorizont_pdf.name }}</strong>{% endif %}
+      – PDF ersetzen
+    </summary>
+    <form method="post" enctype="multipart/form-data" class="mt-4 max-w-lg space-y-4">
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+        Ersetzen
+      </button>
+    </form>
+  </details>
+
+  <p class="mb-4 text-sm text-slate-600">
+    Links eine Aufgabe auswählen, dann rechts ein Rechteck auf der passenden Seite ziehen.
+    Rechtecke lassen sich anschließend verschieben (ziehen), in der Größe ändern (Griff
+    unten rechts) und löschen (× beim Überfahren).
+  </p>
+
+  <div
+    class="grid gap-6 sm:grid-cols-[280px_1fr]"
+    data-bereichsmarkierung
+    data-pdf-url="{% url 'archiv:klausur_datei' klausur.pk 'pdf' %}"
+    data-pdfjs-url="{% static 'pdfjs/pdf.min.mjs' %}"
+    data-pdfjs-worker-url="{% static 'pdfjs/pdf.worker.min.mjs' %}"
+    data-bereich-erstellen-url="{% url 'editor:bereich_erstellen' klausur.pk %}"
+    data-bereich-aktualisieren-url-vorlage="{% url 'editor:bereich_aktualisieren' klausur.pk 0 %}"
+    data-bereich-loeschen-url-vorlage="{% url 'editor:bereich_loeschen' klausur.pk 0 %}"
+  >
+    {% include "editor/_aufgaben_bereich_panel.html" %}
+    <div id="pdf-seiten"></div>
+  </div>
+  {{ bereiche_script }}
+
+  <div class="mt-8">
+    <a href="{% url 'editor:schritt3' klausur.pk %}" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+      Weiter
+    </a>
+  </div>
+
+  <script type="module" src="{% static 'js/bereichsmarkierung.js' %}"></script>
+{% else %}
+  <form method="post" enctype="multipart/form-data" class="max-w-lg space-y-4">
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+      Weiter
+    </button>
+  </form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Eigenes KI-Werkzeug{% endblock %}
+
+{% block content %}
+<h1 class="mb-2 text-xl font-semibold">{{ klausur.titel }}</h1>
+<p class="mb-6 text-sm">
+  <a href="{% url 'editor:schritt3' klausur.pk %}" class="underline">Zurück zu Schritt 3</a>
+</p>
+
+<div class="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+  Diese App sendet nichts an KI-Dienste. Du entscheidest selbst, ob du das Klausur-PDF in
+  ein eigenes KI-Werkzeug lädst.
+</div>
+
+<h2 class="mb-2 text-sm font-semibold text-slate-700">1. Prompt für dein KI-Werkzeug erzeugen</h2>
+<textarea readonly rows="10" class="mb-2 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs">{{ prompt }}</textarea>
+<div class="mb-8 flex flex-wrap gap-3">
+  <button type="button" data-copy="{{ prompt }}" class="rounded-md bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700">
+    Prompt kopieren
+  </button>
+  <a href="data:text/plain;charset=utf-8,{{ prompt|urlencode }}" download="prompt-{{ klausur.pk }}.txt"
+     class="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50">
+    Als .txt herunterladen
+  </a>
+</div>
+
+<h2 class="mb-2 text-sm font-semibold text-slate-700">2. JSON einfügen</h2>
+<p class="mb-4 text-sm text-slate-600">
+  Füge hier das vollständige JSON ein, das dein KI-Werkzeug zurückgegeben hat (nur Seitenzahlen,
+  keine Koordinaten – die Bereiche zeichnest du danach in Schritt 3 selbst nach).
+  <details class="mt-2">
+    <summary class="cursor-pointer underline">Beispiel anzeigen</summary>
+    <pre class="mt-2 max-w-xl overflow-x-auto rounded-md bg-slate-100 p-3 text-xs">{{ beispiel_json }}</pre>
+  </details>
+  <a href="{% url 'editor:option_c_format' %}" class="underline" target="_blank">Vollständige Formatbeschreibung</a>
+</p>
+
+{% if ergebnis and ergebnis.fehler %}
+  <div class="mb-4 rounded-md border border-red-300 bg-red-50 p-4">
+    <h3 class="mb-2 text-sm font-semibold text-red-800">Fehler</h3>
+    <ul class="list-disc space-y-1 pl-5 text-sm text-red-800">
+      {% for fehler in ergebnis.fehler %}<li>{{ fehler }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if ergebnis and ergebnis.konflikte %}
+  <div class="mb-4 rounded-md border border-amber-300 bg-amber-50 p-4">
+    <h3 class="mb-2 text-sm font-semibold text-amber-800">
+      Abweichungen von Schritt 1 (Schritt 1 behält in jedem Fall Vorrang)
+    </h3>
+    <ul class="space-y-1 text-sm text-amber-800">
+      {% for konflikt in ergebnis.konflikte %}
+        <li>{{ konflikt.label }}: Schritt 1 = „{{ konflikt.schritt1 }}“, JSON = „{{ konflikt.json }}“</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post" class="space-y-3">
+  {% csrf_token %}
+  <textarea name="json_text" rows="12" class="w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-xs"
+            placeholder='{"aufgaben": [...]}'>{{ json_text }}</textarea>
+  {% if ergebnis and ergebnis.konflikte %}
+    <label class="flex items-start gap-2 text-sm">
+      <input type="checkbox" name="konflikte_bestaetigt" value="1" class="mt-1">
+      Ich habe die Abweichungen geprüft und möchte trotzdem übernehmen.
+    </label>
+  {% endif %}
+  <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
+    Validieren &amp; übernehmen
+  </button>
+</form>
+{% endblock %}

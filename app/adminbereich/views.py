@@ -1,5 +1,5 @@
 from accounts.models import Lehrkraft, Zugangscode
-from archiv.models import Fach, NachschreibZugriff
+from archiv.models import Fach, Klausur, NachschreibZugriff
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.html import format_html
@@ -12,6 +12,7 @@ from importer.vorschau import berechne_vorschau
 
 from .decorators import admin_erforderlich
 from .forms import (
+    AblehnenForm,
     FachErstellenForm,
     ImportUploadForm,
     LehrkraftFaecherForm,
@@ -41,6 +42,9 @@ def dashboard(request):
         "anzahl_lehrkraefte": Lehrkraft.objects.count(),
         "anzahl_faecher": Fach.objects.count(),
         "anzahl_codes": Zugangscode.objects.count(),
+        "anzahl_zur_freigabe": Klausur.objects.sichtbar_fuer(request)
+        .filter(status=Klausur.Status.EINGEREICHT)
+        .count(),
     }
     return render(request, "adminbereich/dashboard.html", kontext)
 
@@ -151,6 +155,57 @@ def zugangscode_neu_generieren(request, pk):
         ),
     )
     return redirect("adminbereich:zugangscode_liste")
+
+
+@admin_erforderlich
+def freigabe_liste(request):
+    klausuren = (
+        Klausur.objects.select_related("fach", "ersteller")
+        .sichtbar_fuer(request)
+        .filter(status=Klausur.Status.EINGEREICHT)
+    )
+    return render(request, "adminbereich/freigabe_liste.html", {"klausuren": klausuren})
+
+
+@admin_erforderlich
+def freigabe_detail(request, pk):
+    # `sichtbar_fuer` beschränkt dies automatisch auf die Fächer des Admins (siehe
+    # CLAUDE.md, Abschnitt Lehrkraft-Editor) – ein Admin kann so keine Klausur
+    # fachfremder Lehrkräfte freigeben oder ablehnen.
+    klausur = get_object_or_404(
+        Klausur.objects.select_related("fach", "ersteller").sichtbar_fuer(request), pk=pk
+    )
+    ablehnen_form = AblehnenForm()
+
+    if request.method == "POST":
+        aktion = request.POST.get("aktion")
+        if klausur.status != Klausur.Status.EINGEREICHT:
+            messages.error(
+                request, "Nur eingereichte Klausuren können freigegeben oder abgelehnt werden."
+            )
+            return redirect("adminbereich:freigabe_liste")
+
+        if aktion == "freigeben":
+            klausur.status = Klausur.Status.FREIGEGEBEN
+            klausur.ablehnungskommentar = ""
+            klausur.save(update_fields=["status", "ablehnungskommentar"])
+            messages.success(request, f"„{klausur.titel}“ wurde freigegeben.")
+            return redirect("adminbereich:freigabe_liste")
+        elif aktion == "ablehnen":
+            ablehnen_form = AblehnenForm(request.POST)
+            if ablehnen_form.is_valid():
+                klausur.status = Klausur.Status.ABGELEHNT
+                klausur.ablehnungskommentar = ablehnen_form.cleaned_data["kommentar"]
+                klausur.save(update_fields=["status", "ablehnungskommentar"])
+                messages.success(request, f"„{klausur.titel}“ wurde abgelehnt.")
+                return redirect("adminbereich:freigabe_liste")
+
+    aufgaben = klausur.aufgaben.prefetch_related("teilaufgaben__themen").all()
+    return render(
+        request,
+        "adminbereich/freigabe_detail.html",
+        {"klausur": klausur, "aufgaben": aufgaben, "ablehnen_form": ablehnen_form},
+    )
 
 
 @admin_erforderlich

@@ -10,7 +10,7 @@ import pytest
 
 from archiv.models import Aufgabe, Klausur, Teilaufgabe
 
-from .conftest import erstelle_aufgabe, erstelle_teilaufgabe
+from .conftest import erstelle_aufgabe, erstelle_klausur, erstelle_teilaufgabe
 
 
 @pytest.mark.django_db
@@ -80,6 +80,88 @@ class TestKlausurSichtbarFuer:
     ):
         sichtbar = Klausur.objects.sichtbar_fuer(anonymer_request)
         assert sichtbar.count() == 0
+
+
+@pytest.mark.django_db
+class TestKlausurSichtbarFuerStatus:
+    """Pflicht-Tests für den Freigabe-Status aus dem Lehrkraft-Editor (CLAUDE.md,
+    Abschnitt Lehrkraft-Editor): Entwürfe/eingereichte/abgelehnte Klausuren dürfen
+    niemals für SuS oder fachfremde/andere Lehrkräfte sichtbar sein."""
+
+    @pytest.mark.parametrize(
+        "status",
+        [Klausur.Status.ENTWURF, Klausur.Status.EINGEREICHT, Klausur.Status.ABGELEHNT],
+    )
+    def test_sus_sieht_niemals_unfreigegebene_klausur(self, sus_request, fach_mathe, status):
+        klausur = erstelle_klausur(fach_mathe, status=status, variante=status)
+        assert klausur not in Klausur.objects.sichtbar_fuer(sus_request)
+
+    def test_sus_sieht_freigegebene_klausur(self, sus_request, fach_mathe):
+        klausur = erstelle_klausur(fach_mathe, status=Klausur.Status.FREIGEGEBEN)
+        assert klausur in Klausur.objects.sichtbar_fuer(sus_request)
+
+    def test_lehrkraft_sieht_eigene_klausur_unabhaengig_vom_status(
+        self, lehrkraft_request_factory, fach_mathe
+    ):
+        request = lehrkraft_request_factory(faecher=[fach_mathe])
+        entwurf = erstelle_klausur(
+            fach_mathe, status=Klausur.Status.ENTWURF, ersteller=request.user, variante="eigen"
+        )
+        assert entwurf in Klausur.objects.sichtbar_fuer(request)
+
+    def test_lehrkraft_sieht_keine_entwuerfe_anderer_lehrkraft(
+        self, lehrkraft_request_factory, fach_mathe
+    ):
+        lehrkraft_a = lehrkraft_request_factory(faecher=[fach_mathe])
+        lehrkraft_b = lehrkraft_request_factory(faecher=[fach_mathe])
+        entwurf_a = erstelle_klausur(
+            fach_mathe, status=Klausur.Status.ENTWURF, ersteller=lehrkraft_a.user, variante="a"
+        )
+        assert entwurf_a not in Klausur.objects.sichtbar_fuer(lehrkraft_b)
+
+    def test_lehrkraft_sieht_keine_eingereichten_klausuren_anderer_lehrkraft(
+        self, lehrkraft_request_factory, fach_mathe
+    ):
+        lehrkraft_a = lehrkraft_request_factory(faecher=[fach_mathe])
+        lehrkraft_b = lehrkraft_request_factory(faecher=[fach_mathe])
+        eingereicht_a = erstelle_klausur(
+            fach_mathe,
+            status=Klausur.Status.EINGEREICHT,
+            ersteller=lehrkraft_a.user,
+            variante="eingereicht-a",
+        )
+        assert eingereicht_a not in Klausur.objects.sichtbar_fuer(lehrkraft_b)
+
+    def test_admin_sieht_eingereichte_klausuren_im_eigenen_fach(
+        self, lehrkraft_request_factory, fach_mathe
+    ):
+        lehrkraft = lehrkraft_request_factory(faecher=[fach_mathe])
+        admin = lehrkraft_request_factory(faecher=[fach_mathe], ist_admin=True)
+        eingereicht = erstelle_klausur(
+            fach_mathe,
+            status=Klausur.Status.EINGEREICHT,
+            ersteller=lehrkraft.user,
+            variante="zur-pruefung",
+        )
+        assert eingereicht in Klausur.objects.sichtbar_fuer(admin)
+
+    def test_admin_sieht_keine_eingereichten_klausuren_fachfremder_lehrkraft(
+        self, lehrkraft_request_factory, fach_mathe, fach_deutsch
+    ):
+        lehrkraft = lehrkraft_request_factory(faecher=[fach_deutsch])
+        admin = lehrkraft_request_factory(faecher=[fach_mathe], ist_admin=True)
+        eingereicht = erstelle_klausur(
+            fach_deutsch,
+            status=Klausur.Status.EINGEREICHT,
+            ersteller=lehrkraft.user,
+            variante="fachfremd",
+        )
+        assert eingereicht not in Klausur.objects.sichtbar_fuer(admin)
+
+    def test_sus_sieht_keine_aufgaben_unfreigegebener_klausur(self, sus_request, fach_mathe):
+        entwurf = erstelle_klausur(fach_mathe, status=Klausur.Status.ENTWURF, variante="aufgabe")
+        aufgabe = erstelle_aufgabe(entwurf)
+        assert aufgabe not in Aufgabe.objects.sichtbar_fuer(sus_request)
 
 
 @pytest.mark.django_db

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Aufgabe, Fach, Klausur, NachschreibZugriff, Teilaufgabe, Thema
+from .models import Aufgabe, Bereich, Fach, Klausur, NachschreibZugriff, Teilaufgabe, Thema
 
 
 @admin.register(Fach)
@@ -23,8 +23,18 @@ class AufgabeInline(admin.TabularInline):
 
 @admin.register(Klausur)
 class KlausurAdmin(admin.ModelAdmin):
-    list_display = ["titel", "fach", "jahr", "kursart", "termin", "variante", "hilfsmittel"]
-    list_filter = ["fach", "jahr", "kursart", "termin", "hilfsmittel"]
+    list_display = [
+        "titel",
+        "fach",
+        "jahr",
+        "kursart",
+        "termin",
+        "variante",
+        "hilfsmittel",
+        "status",
+        "ersteller",
+    ]
+    list_filter = ["fach", "jahr", "kursart", "termin", "hilfsmittel", "status"]
     search_fields = ["titel"]
     inlines = [AufgabeInline]
 
@@ -46,6 +56,12 @@ class TeilaufgabeAdmin(admin.ModelAdmin):
     list_display = ["bezeichnung", "aufgabe", "anforderungsbereich", "punkte"]
     list_filter = ["anforderungsbereich"]
     filter_horizontal = ["themen"]
+
+
+@admin.register(Bereich)
+class BereichAdmin(admin.ModelAdmin):
+    list_display = ["seite", "aufgabe", "teilaufgabe"]
+    list_filter = ["aufgabe__klausur__fach"]
 
 
 @admin.register(NachschreibZugriff)

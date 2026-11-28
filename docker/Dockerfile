@@ -3,8 +3,12 @@ FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
+# tesseract-ocr/-deu, ghostscript, qpdf: Laufzeit-Abhängigkeiten von OCRmyPDF (Lehrkraft-
+# Editor, Textextraktion bei Seiten ohne Textebene – siehe CLAUDE.md).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && apt-get install -y --no-install-recommends \
+       curl ca-certificates \
+       tesseract-ocr tesseract-ocr-deu ghostscript qpdf \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.13.9 /uv /usr/local/bin/uv

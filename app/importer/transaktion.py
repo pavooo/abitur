@@ -105,6 +105,9 @@ def _klausur_importieren(eintrag: KlausurEintrag, protokoll: Importprotokoll):
             "titel": daten["titel"],
             "hilfsmittel": daten["hilfsmittel"],
             "importprotokoll": protokoll,
+            # Admin-Importe sind immer sofort sichtbar, unabhängig vom Lehrkraft-Editor-
+            # Status einer gleichnamigen Klausur (siehe CLAUDE.md, Abschnitt Import-Regeln).
+            "status": Klausur.Status.FREIGEGEBEN,
         },
     )
 

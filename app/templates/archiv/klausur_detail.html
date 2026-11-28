@@ -31,22 +31,24 @@
     <p class="mt-1 text-xs text-slate-500">
       {{ aufgabe.get_pruefungsteil_display }}
       {% if aufgabe.aufgabenbereich != "keine_angabe" %} · {{ aufgabe.get_aufgabenbereich_display }}{% endif %}
-      · Seite {{ aufgabe.seite_von }}{% if aufgabe.seite_bis != aufgabe.seite_von %}–{{ aufgabe.seite_bis }}{% endif %}
+      {% if aufgabe.seite_von %}· Seite {{ aufgabe.seite_von }}{% if aufgabe.seite_bis != aufgabe.seite_von %}–{{ aufgabe.seite_bis }}{% endif %}{% endif %}
     </p>
     <ul class="mt-3 space-y-3">
       {% for teilaufgabe in aufgabe.teilaufgaben.all %}
         <li class="border-t border-slate-100 pt-3 text-sm">
           <p class="font-medium">
             {{ teilaufgabe.bezeichnung }}
-            <a href="{% url 'archiv:klausur_datei' klausur.pk 'pdf' %}#page={{ teilaufgabe.seite }}" target="_blank"
-               class="ml-2 text-xs font-normal text-slate-500 hover:underline">Seite {{ teilaufgabe.seite }} im PDF</a>
+            {% if teilaufgabe.seite %}
+              <a href="{% url 'archiv:klausur_datei' klausur.pk 'pdf' %}#page={{ teilaufgabe.seite }}" target="_blank"
+                 class="ml-2 text-xs font-normal text-slate-500 hover:underline">Seite {{ teilaufgabe.seite }} im PDF</a>
+            {% endif %}
             {% if teilaufgabe.punkte %}
               <span class="ml-2 text-xs font-normal text-slate-500">({{ teilaufgabe.punkte }} Punkte)</span>
             {% endif %}
           </p>
           <p class="mt-1 text-slate-700">{{ teilaufgabe.text }}</p>
           <p class="mt-1 text-xs text-slate-500">
-            Anforderungsbereich {{ teilaufgabe.anforderungsbereich }}
+            {% if teilaufgabe.anforderungsbereich %}Anforderungsbereich {{ teilaufgabe.anforderungsbereich }}{% endif %}
             {% if teilaufgabe.themen.all %}
               · {% for thema in teilaufgabe.themen.all %}{{ thema.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
             {% endif %}

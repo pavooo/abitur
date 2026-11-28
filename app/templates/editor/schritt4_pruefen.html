@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Prüfen &amp; Einreichen{% endblock %}
+
+{% block content %}
+<h1 class="mb-6 text-xl font-semibold">{{ klausur.titel }}</h1>
+
+{% include "editor/_schritt_nav.html" with aktueller_schritt=4 klausur=klausur %}
+
+{% if pruefung.pflicht_luecken %}
+  <div class="mb-6 rounded-md border border-red-300 bg-red-50 p-4">
+    <h2 class="mb-2 text-sm font-semibold text-red-800">Noch nicht vollständig</h2>
+    <ul class="list-disc space-y-1 pl-5 text-sm text-red-800">
+      {% for luecke in pruefung.pflicht_luecken %}<li>{{ luecke }}</li>{% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <div class="mb-6 rounded-md border border-green-300 bg-green-50 p-4 text-sm text-green-800">
+    Alle Pflichtangaben sind vollständig.
+  </div>
+{% endif %}
+
+{% if pruefung.hinweise %}
+  <div class="mb-6 rounded-md border border-amber-300 bg-amber-50 p-4">
+    <h2 class="mb-2 text-sm font-semibold text-amber-800">Hinweise (nicht zwingend für das Einreichen)</h2>
+    <ul class="list-disc space-y-1 pl-5 text-sm text-amber-800">
+      {% for hinweis in pruefung.hinweise %}<li>{{ hinweis }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <button
+    type="submit"
+    {% if pruefung.pflicht_luecken %}disabled{% endif %}
+    class="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    Einreichen
+  </button>
+  {% if pruefung.pflicht_luecken %}
+    <p class="mt-2 text-sm text-slate-500">
+      Bitte zuerst die offenen Pflichtangaben oben beheben (in Schritt 2 bzw. 3).
+    </p>
+  {% endif %}
+</form>
+{% endblock %}

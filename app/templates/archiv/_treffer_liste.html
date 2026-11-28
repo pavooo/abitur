@@ -16,8 +16,10 @@
         {% for teilaufgabe in eintrag.teilaufgaben %}
           <li class="text-sm">
             <span class="font-medium">{{ teilaufgabe.bezeichnung }}</span>
-            <a href="{% url 'archiv:klausur_datei' eintrag.klausur.pk 'pdf' %}#page={{ teilaufgabe.seite }}"
-               target="_blank" class="ml-1 text-xs text-slate-500 hover:underline">(Seite {{ teilaufgabe.seite }})</a>
+            {% if teilaufgabe.seite %}
+              <a href="{% url 'archiv:klausur_datei' eintrag.klausur.pk 'pdf' %}#page={{ teilaufgabe.seite }}"
+                 target="_blank" class="ml-1 text-xs text-slate-500 hover:underline">(Seite {{ teilaufgabe.seite }})</a>
+            {% endif %}
             — {{ teilaufgabe.text|truncatewords:30 }}
             {% if teilaufgabe.themen.all %}
               <span class="block text-xs text-slate-500">

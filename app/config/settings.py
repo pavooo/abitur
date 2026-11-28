@@ -35,6 +35,7 @@ LOCAL_APPS = [
     "archiv",
     "importer",
     "adminbereich",
+    "editor",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -128,6 +129,12 @@ MEDIA_ROOT = REPO_ROOT / "media"
 
 # Zwischenspeicher für hochgeladene Import-Pakete zwischen Vorschau und Bestätigung.
 IMPORT_STAGING_ROOT = REPO_ROOT / "import_staging"
+
+# Upload-Limits für Klausur-PDFs im Lehrkraft-Editor (siehe CLAUDE.md, Abschnitt
+# Lehrkraft-Editor → Sicherheit). Admin-Importe durchlaufen diese Prüfung nicht, da
+# sie fertig geprüfte Pakete übernehmen.
+KLAUSUR_PDF_MAX_MB = env.int("KLAUSUR_PDF_MAX_MB", default=30)
+KLAUSUR_PDF_MAX_SEITEN = env.int("KLAUSUR_PDF_MAX_SEITEN", default=60)
 
 # Interner nginx-Pfad für X-Accel-Redirect bei geschützten Mediendateien (siehe
 # archiv/dateien.py). Muss mit der nginx-Konfiguration aus Phase 6 übereinstimmen;

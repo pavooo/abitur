@@ -20,6 +20,8 @@ urlpatterns = [
         views.zugangscode_neu_generieren,
         name="zugangscode_neu_generieren",
     ),
+    path("freigabe/", views.freigabe_liste, name="freigabe_liste"),
+    path("freigabe/<int:pk>/", views.freigabe_detail, name="freigabe_detail"),
     path("import/", views.import_hochladen, name="import_hochladen"),
     path("import/bestaetigen/", views.import_bestaetigen, name="import_bestaetigen"),
     path("import/protokoll/", views.import_protokoll_liste, name="import_protokoll_liste"),

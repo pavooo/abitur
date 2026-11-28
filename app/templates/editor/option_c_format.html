@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}JSON-Format für Option C{% endblock %}
+
+{% block content %}
+<h1 class="mb-6 text-xl font-semibold">JSON-Format für das eigene KI-Werkzeug</h1>
+
+<p class="mb-4 text-sm text-slate-600">
+  Dasselbe Format wie beim Admin-Import (<code>schema/klausur.schema.json</code>), nur ohne
+  das Feld <code>id</code> und ohne Koordinaten – Teilaufgaben haben nur eine Seitenzahl,
+  keine Bereiche. Die übrigen Metadaten (Fach, Jahr, Kursart, Termin, Variante, Titel,
+  Hilfsmittel) sind optional: Schritt 1 behält in jedem Fall Vorrang, Abweichungen werden
+  nur zur Kontrolle angezeigt.
+</p>
+
+<h2 class="mb-2 mt-6 text-sm font-semibold text-slate-700">Klausur-Ebene</h2>
+<table class="mb-6 w-full border-collapse text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr><th class="px-3 py-2">Feld</th><th class="px-3 py-2">Typ</th><th class="px-3 py-2">Hinweis</th></tr>
+  </thead>
+  <tbody>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>aufgaben</code></td><td class="px-3 py-2">Array</td><td class="px-3 py-2">Pflicht, mindestens ein Eintrag</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>fach, jahr, kursart, termin, variante, titel, hilfsmittel</code></td><td class="px-3 py-2">–</td><td class="px-3 py-2">Optional, nur zum Abgleich mit Schritt 1</td></tr>
+  </tbody>
+</table>
+
+<h2 class="mb-2 mt-6 text-sm font-semibold text-slate-700">Aufgabe</h2>
+<table class="mb-6 w-full border-collapse text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr><th class="px-3 py-2">Feld</th><th class="px-3 py-2">Typ</th><th class="px-3 py-2">Hinweis</th></tr>
+  </thead>
+  <tbody>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>nummer</code></td><td class="px-3 py-2">Ganzzahl ≥ 1</td><td class="px-3 py-2">Pflicht, eindeutig je Klausur</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>seiten</code></td><td class="px-3 py-2">[von, bis]</td><td class="px-3 py-2">Pflicht, zwei Seitenzahlen</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>pruefungsteil</code></td><td class="px-3 py-2">„hilfsmittelfrei“ | „mit_hilfsmitteln“</td><td class="px-3 py-2">Pflicht</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>kontext</code></td><td class="px-3 py-2">Text</td><td class="px-3 py-2">Optional</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>aufgabenbereich</code></td><td class="px-3 py-2">„pflicht“ | „wahlpflicht“ | „keine_angabe“</td><td class="px-3 py-2">Optional, Standard „keine_angabe“</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>teilaufgaben</code></td><td class="px-3 py-2">Array</td><td class="px-3 py-2">Pflicht, mindestens ein Eintrag</td></tr>
+  </tbody>
+</table>
+
+<h2 class="mb-2 mt-6 text-sm font-semibold text-slate-700">Teilaufgabe</h2>
+<table class="mb-6 w-full border-collapse text-sm">
+  <thead class="bg-slate-100 text-left">
+    <tr><th class="px-3 py-2">Feld</th><th class="px-3 py-2">Typ</th><th class="px-3 py-2">Hinweis</th></tr>
+  </thead>
+  <tbody>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>bezeichnung</code></td><td class="px-3 py-2">Text</td><td class="px-3 py-2">Pflicht, eindeutig je Aufgabe (z. B. „1c“)</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>seite</code></td><td class="px-3 py-2">Ganzzahl ≥ 1</td><td class="px-3 py-2">Pflicht</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>text</code></td><td class="px-3 py-2">Text</td><td class="px-3 py-2">Pflicht</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>anforderungsbereich</code></td><td class="px-3 py-2">„I“ | „II“ | „III“</td><td class="px-3 py-2">Pflicht</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>punkte</code></td><td class="px-3 py-2">Ganzzahl ≥ 0</td><td class="px-3 py-2">Optional</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>themen</code></td><td class="px-3 py-2">Array von Kennungen</td><td class="px-3 py-2">Optional; unbekannte Kennungen sind ein Fehler</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>operatoren</code></td><td class="px-3 py-2">Array von Texten</td><td class="px-3 py-2">Optional</td></tr>
+    <tr class="border-t border-slate-200"><td class="px-3 py-2"><code>begruendung</code></td><td class="px-3 py-2">Text</td><td class="px-3 py-2">Optional</td></tr>
+  </tbody>
+</table>
+
+<h2 class="mb-2 mt-6 text-sm font-semibold text-slate-700">Vollständiges Beispiel</h2>
+<pre class="overflow-x-auto rounded-md bg-slate-100 p-3 text-xs">{{ beispiel_json }}</pre>
+{% endblock %}

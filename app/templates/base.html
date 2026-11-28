@@ -34,6 +34,7 @@
         {% endif %}
         {% if request.user.is_authenticated %}
           <span>{{ request.user.email }}</span>
+          <a href="{% url 'editor:meine_klausuren' %}" class="hover:underline">Meine Klausuren</a>
           {% if not nachschreibmodus_aktiv %}
             <form method="post" action="{% url 'archiv:nachschreibmodus_umschalten' %}" class="inline">
               {% csrf_token %}

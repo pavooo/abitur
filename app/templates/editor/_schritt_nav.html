@@ -1,0 +1,38 @@
+{% comment %}
+Erwartet im Kontext: `aktueller_schritt` (int 1–4) und `klausur` (None, solange Schritt 1
+noch nicht gespeichert wurde – dann sind die anderen Schritte noch nicht erreichbar).
+{% endcomment %}
+<nav class="mb-6 grid grid-cols-4 gap-2 text-sm">
+  <span class="rounded-md px-3 py-2 text-center
+    {% if aktueller_schritt == 1 %}bg-slate-800 text-white font-semibold
+    {% elif klausur %}bg-slate-100 text-slate-700
+    {% else %}bg-slate-50 text-slate-400{% endif %}">
+    {% if klausur and aktueller_schritt != 1 %}
+      <a href="{% url 'editor:schritt1' klausur.pk %}">1. Metadaten</a>
+    {% else %}1. Metadaten{% endif %}
+  </span>
+  <span class="rounded-md px-3 py-2 text-center
+    {% if aktueller_schritt == 2 %}bg-slate-800 text-white font-semibold
+    {% elif klausur %}bg-slate-100 text-slate-700
+    {% else %}bg-slate-50 text-slate-400{% endif %}">
+    {% if klausur and aktueller_schritt != 2 %}
+      <a href="{% url 'editor:schritt2' klausur.pk %}">2. PDF</a>
+    {% else %}2. PDF{% endif %}
+  </span>
+  <span class="rounded-md px-3 py-2 text-center
+    {% if aktueller_schritt == 3 %}bg-slate-800 text-white font-semibold
+    {% elif klausur %}bg-slate-100 text-slate-700
+    {% else %}bg-slate-50 text-slate-400{% endif %}">
+    {% if klausur and aktueller_schritt != 3 %}
+      <a href="{% url 'editor:schritt3' klausur.pk %}">3. Teilaufgaben</a>
+    {% else %}3. Teilaufgaben{% endif %}
+  </span>
+  <span class="rounded-md px-3 py-2 text-center
+    {% if aktueller_schritt == 4 %}bg-slate-800 text-white font-semibold
+    {% elif klausur %}bg-slate-100 text-slate-700
+    {% else %}bg-slate-50 text-slate-400{% endif %}">
+    {% if klausur and aktueller_schritt != 4 %}
+      <a href="{% url 'editor:schritt4' klausur.pk %}">4. Prüfen &amp; Einreichen</a>
+    {% else %}4. Prüfen &amp; Einreichen{% endif %}
+  </span>
+</nav>

@@ -4,7 +4,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from .sichtbarkeit import Termin, sichtbarkeitskontext_fuer
+from .sichtbarkeit import Status, Termin, sichtbarkeitskontext_fuer
 
 
 class Fach(models.Model):
@@ -66,11 +66,16 @@ class Thema(models.Model):
 class KlausurQuerySet(models.QuerySet):
     def sichtbar_fuer(self, request):
         kontext = sichtbarkeitskontext_fuer(request)
-        return self.filter(fach_id__in=kontext.fach_ids, termin__in=kontext.erlaubte_termine)
+        return self.filter(
+            kontext.status_filter,
+            fach_id__in=kontext.fach_ids,
+            termin__in=kontext.erlaubte_termine,
+        )
 
 
 class Klausur(models.Model):
     Termin = Termin
+    Status = Status
 
     class Kursart(models.TextChoices):
         GK = "GK", "Grundkurs"
@@ -101,6 +106,18 @@ class Klausur(models.Model):
         on_delete=models.SET_NULL,
         related_name="klausuren",
     )
+    status = models.CharField(
+        "Status", max_length=20, choices=Status.choices, default=Status.FREIGEGEBEN
+    )
+    ersteller = models.ForeignKey(
+        "accounts.Lehrkraft",
+        verbose_name="Ersteller",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="erstellte_klausuren",
+    )
+    ablehnungskommentar = models.TextField("Ablehnungskommentar", blank=True)
     erstellt_am = models.DateTimeField(auto_now_add=True)
 
     objects = KlausurQuerySet.as_manager()
@@ -140,8 +157,11 @@ class Aufgabe(models.Model):
     )
     nummer = models.PositiveSmallIntegerField("Nummer")
     kontext = models.CharField("Kontext", max_length=200, blank=True)
-    seite_von = models.PositiveSmallIntegerField("Seite von")
-    seite_bis = models.PositiveSmallIntegerField("Seite bis")
+    # Beim Admin-Import immer aus der JSON-Datei gesetzt (Pflichtfeld dort). Im
+    # Lehrkraft-Editor dagegen zunächst leer und wird automatisch aus den Bereichen der
+    # Aufgabe abgeleitet (Min/Max der Seiten), sobald die Lehrkraft Bereiche markiert hat.
+    seite_von = models.PositiveSmallIntegerField("Seite von", null=True, blank=True)
+    seite_bis = models.PositiveSmallIntegerField("Seite bis", null=True, blank=True)
     pruefungsteil = models.CharField("Prüfungsteil", max_length=20, choices=Pruefungsteil.choices)
     aufgabenbereich = models.CharField(
         "Aufgabenbereich",
@@ -188,14 +208,19 @@ class Teilaufgabe(models.Model):
         Aufgabe, verbose_name="Aufgabe", on_delete=models.CASCADE, related_name="teilaufgaben"
     )
     bezeichnung = models.CharField("Bezeichnung", max_length=20)
-    text = models.TextField("Text")
-    seite = models.PositiveSmallIntegerField("Seite")
+    # Beim Admin-Import immer gesetzt (Pflichtfelder dort). Im Lehrkraft-Editor zunächst
+    # leer: Text wird aus den Bereichen der Teilaufgabe extrahiert, Seite daraus
+    # abgeleitet, Anforderungsbereich bestenfalls per Operatoren-Vorschlag vorbefüllt,
+    # endgültig aber erst von der Lehrkraft bestätigt (siehe CLAUDE.md, Abschnitt
+    # Lehrkraft-Editor).
+    text = models.TextField("Text", blank=True)
+    seite = models.PositiveSmallIntegerField("Seite", null=True, blank=True)
     punkte = models.PositiveSmallIntegerField("Punkte", null=True, blank=True)
     themen = models.ManyToManyField(
         Thema, verbose_name="Themen", related_name="teilaufgaben", blank=True
     )
     anforderungsbereich = models.CharField(
-        "Anforderungsbereich", max_length=3, choices=Anforderungsbereich.choices
+        "Anforderungsbereich", max_length=3, choices=Anforderungsbereich.choices, blank=True
     )
     operatoren = ArrayField(
         models.CharField(max_length=50), verbose_name="Operatoren", default=list, blank=True
@@ -220,6 +245,54 @@ class Teilaufgabe(models.Model):
 
     def __str__(self):
         return f"{self.bezeichnung} ({self.aufgabe})"
+
+
+class Bereich(models.Model):
+    """Markierter Bereich auf einer PDF-Seite im Lehrkraft-Editor (CLAUDE.md, Abschnitt
+    Lehrkraft-Editor). Gehört zu genau einer Aufgabe oder einer Teilaufgabe – nie beidem,
+    nie keinem. Koordinaten normiert auf 0–1 relativ zur Seitengröße, damit sie unabhängig
+    von der Darstellungsgröße im Browser sind. Entsteht nur im Lehrkraft-Editor, nicht
+    beim Admin-Import."""
+
+    aufgabe = models.ForeignKey(
+        Aufgabe,
+        verbose_name="Aufgabe",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="bereiche",
+    )
+    teilaufgabe = models.ForeignKey(
+        Teilaufgabe,
+        verbose_name="Teilaufgabe",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="bereiche",
+    )
+    seite = models.PositiveSmallIntegerField("Seite")
+    x0 = models.FloatField("x0")
+    y0 = models.FloatField("y0")
+    x1 = models.FloatField("x1")
+    y1 = models.FloatField("y1")
+
+    class Meta:
+        verbose_name = "Bereich"
+        verbose_name_plural = "Bereiche"
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(aufgabe__isnull=False, teilaufgabe__isnull=True)
+                    | models.Q(aufgabe__isnull=True, teilaufgabe__isnull=False)
+                ),
+                name="bereich_genau_ein_ziel",
+            ),
+        ]
+        ordering = ["seite"]
+
+    def __str__(self):
+        ziel = self.aufgabe or self.teilaufgabe
+        return f"Bereich auf Seite {self.seite} ({ziel})"
 
 
 class NachschreibZugriff(models.Model):
